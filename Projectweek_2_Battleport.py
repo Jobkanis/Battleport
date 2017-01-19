@@ -7,6 +7,7 @@ import pygame
 PlayerNames = ["empty", "player1", "player2"]
 
 Boats = []
+PlayerBoats = []
 
 Positions = []
 
@@ -27,17 +28,19 @@ Player2 = Player("player2")
 
 
 class Boat:
-    def __init__(self, x, y, player):
-        self.Player = player        
+    def __init__(self, name):
+        self.Name = name
+
+        self.Player = EmptyPlayer    
         
         self.Size = 4 #2-4
-        self.X = x
-        self.Y = y
+        self.X = -1
+        self.Y = -1
         self.DefensiveStance = False
 
-        self.AttackRange = x
-        self.MovementRange = x
-        self.Health = x
+        self.AttackRange = 1
+        self.MovementRange = 1
+        self.Health = 1
         
         self.DefensiveStance = False
 
@@ -62,8 +65,7 @@ class Boat:
         def Stance(self):
             DefensiveStance = not DefensiveStance
 
-EmptyBoat = Boat(-1,-1, EmptyPlayer)     
-Boats.append(EmptyBoat)
+EmptyBoat = Boat("empty")     
 
 class Position:
     def __init__(self, player, x, y):
@@ -83,13 +85,13 @@ Positions.append(EmptyPosition)
 
 def GetPosition(x,y):
     for Pos in Positions:
-        if Position.X == x and Position.Y == y:
+        if Pos.X == x and Pos.Y == y:
             return Pos
     return EmptyPosition
 
 def GetBoat(x, y):
-    for boat in Boats:
-        if boat.x == x and boat.y == y:
+    for boat in PlayerBoats:
+        if boat.X == x and boat.Y == y:
             return boat
     else: return EmptyBoat
 
@@ -102,35 +104,70 @@ def createsea():
             LocalPosition = GetPosition(x,y)
             LocalBoat = GetBoat(x,y)
             if LocalBoat.Player == EmptyPlayer:
-                line += " "
+                PrintLine += " "
             elif LocalBoat.Player == Player1:
-                line += "1"
+                PrintLine += "1"
             elif LocalBoat.Player == Player2:
-                line += "2"
-        PrintLine(line)
+                PrintLine += "2"
+        print(PrintLine)
    
-def createstats():
+def createHUD():
     print("Create visual stats: yet to be implemented")             
 
 ################# SET UP GAME ################
 
+def createboats(player, GlobalBoats):
+    LocalBoats = copy.deepcopy(GlobalBoats)
+    for LocalPlayerBoats in LocalBoats:
+        
+        LocalPlayerBoats.Player = player     
+        
+        BoatPosition = GetBoatPosition(LocalPlayerBoats, GlobalBoats) #returns position class
+        LocalPlayerBoats.X = BoatPosition.X
+        LocalPlayerBoats.Y = BoatPosition.Y
+        
+        player.Boats.append(LocalPlayerBoats)
+        PlayerBoats.append(LocalPlayerBoats)
+
 def creategame():
     #players: globals so not necesarry
     #maybe add reseting their stats
-    
 
-    Player1.Boats = [EmptyBoat, EmptyBoat]
-    Player2.Boats = [EmptyBoat, EmptyBoat]
-
-    #positions
+    #Creating positions
     print("Creating positions")
     for y in range (0,20):
         for x in range (0,20):
             LocalPosition = Position(EmptyPlayer, x, y)
-            Positions.append(LocalPosition)\
+            Positions.append(LocalPosition)
+
+    #Creating boats
+
+    LocalBoat = Boat("Size 4")
+    LocalBoat.Size = 4
+    LocalBoat.AttackRange = 1
+    LocalBoat.MovementRange = 1
+    LocalBoat.Health = 4
+    Boats.append(LocalBoat)
+
+    LocalBoat = Boat("Size 3(1)")
+    LocalBoat.Size = 3
+    LocalBoat.AttackRange = 2
+    LocalBoat.MovementRange = 2
+    LocalBoat.Health = 2
+    Boats.append(LocalBoat)
+    LocalBoat = copy.deepcopy(LocalBoat)
+    LocalBoat.Name = "Size 3(2)"
+    Boats.append(LocalBoat)
     
-    #createboats
-    print("Createboats: yet to be implemented")
+    LocalBoat = Boat("Size 2")
+    LocalBoat.Size = 2
+    LocalBoat.AttackRange = 1
+    LocalBoat.MovementRange = 3
+    LocalBoat.Health = 2
+    Boats.append(LocalBoat)
+
+    createboats(Player1, Boats)
+    createboats(Player2, Boats)
 
 ################## ACTIONS #####################
 
@@ -191,7 +228,7 @@ def GetAction(player):
     while LocalDone == False:
         if len(AvaibleBoatsToMove) > 0 or  AvaibleAttacks_No > 0 or AvaiblePlayCards_No > 0:
             #check if skip turn:
-            
+            createsea()
             EndTurn = input("End turn? (yes/no): ")
             if EndTurn == "yes":
                 LocalDone = True
@@ -236,6 +273,15 @@ def GetAction(player):
                     MoveBoat(BoatToMove)
         else:
             LocalDone = True
+
+def GetBoatPosition(PlayerBoats, GlobalBoats):
+    print("Pick Boat Position: yet to be implemented!")
+    LocalPlayer = PlayerBoats.Player
+    x = int(input("Player: " + LocalPlayer.Name + "| Boat: " + PlayerBoats.Name + "| Insert X Postion (0-19): "))
+    y = int(input("Player: " + LocalPlayer.Name + "| Boat: " + PlayerBoats.Name + "| Insert Y Postion (0-19): "))
+    LocalPosition = GetPosition(x,y)
+    return LocalPosition
+
 
 ################## PLAYER TURNS ####################
 def turn(player):
