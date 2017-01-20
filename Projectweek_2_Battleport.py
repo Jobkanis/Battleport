@@ -4,17 +4,15 @@ import time
 import copy
 import pygame
 
-PlayerNames = ["empty", "player1", "player2"]
+#PlayerNames = ["empty", "player1", "player2"]
+#BoatKinds = ["size2", "size31", "size32", "size4"]
+#Perks = ["none"]
 
-Boats = []
-PlayerBoats = []
+Players = []
 
 Positions = []
 
-Perks = ["none"]
-
 ################### CLASSES ########################
-
 class Player:
     def __init__(self, playername):
         self.Name = playername
@@ -22,53 +20,96 @@ class Player:
         self.Boats = []
         self.Points = 0
 
-EmptyPlayer = Player("empty")
-Player1 = Player("player1")
-Player2 = Player("player2")
-
+    def CreateBoats(self):
+        self.Boats = []
+        self.Boats.append(Boat(self, "size2"))
+        self.Boats.append(Boat(self, "size31"))
+        self.Boats.append(Boat(self, "size32"))
+        self.Boats.append(Boat(self, "size4"))
 
 class Boat:
-    def __init__(self, name):
-        self.Name = name
+    def __init__(self, player, kind):
+        self.Player = player
+        self.Kind = kind
+        self.Name = "empty"
 
-        self.Player = EmptyPlayer    
+        if self.Player == EmptyPlayer: 
+            LocalBoatName = -1
+        elif self.Player == Player1:
+            LocalBoatName = 0
+        elif self.Player == Player2:
+            LocalBoatName = 1
+        else:
+            LocalBoatName = -2
+
+        #BoatKinds = ["size2", "size31", "size32", "size4"]
+        if LocalBoatName == 0 or LocalBoatName == 1:    
+            if kind == "size2":
+                self.Name = ["Furgo Saltire", "Santa Bettina"][LocalBoatName]
+                self.Health = 2
+                self.MovementRange = 3
+                self.X_AttackRange = 2
+                self.Y_AttackRange = 2
+                self.DefensiveRange = 3
+            if kind == "size31":
+                self.Name = ["Silver whisper", "Sea Spirit"][LocalBoatName]
+                self.Health = 3
+                self.MovementRange = 2
+                self.X_AttackRange = 3
+                self.Y_AttackRange = 3
+                self.DefensiveRange = 4
+            if kind == "size32":
+                self.Name = ["Windsurf", "Intensity"][LocalBoatName]
+                self.Health = 3
+                self.MovementRange = 2
+                self.X_AttackRange = 3
+                self.Y_AttackRange = 3
+                self.DefensiveRange = 4
+            if kind == "size4":
+                self.Name = ["Merapi", "Amadea"][LocalBoatName]
+                self.Health = 4
+                self.MovementRange = 1
+                self.X_AttackRange = 4
+                self.Y_AttackRange = 4
+                self.DefensiveRange = 5          
         
-        self.Size = 4 #2-4
+        self.Perks = "none"
+        self.DefensiveStance = False
+
         self.X = -1
         self.Y = -1
-        self.DefensiveStance = False
+        if self.Player != EmptyPlayer:
+            BoatPosition = self.PlaceBoats() #returns position class
+            if BoatPosition in Positions: #makes sure the position exists: fixes error in creating empty class"
+                self.X = BoatPosition.X
+                self.Y = BoatPosition.Y
 
-        self.AttackRange = 1
-        self.MovementRange = 1
-        self.Health = 1
+    def PlaceBoats(self):
+        print("Pick Boat Position: yet to be implemented!")
+        x = int(input("Player: " + self.Player.Name + "| Boat: " + self.Name + "| Insert X Postion (0-19): "))
+        y = int(input("Player: " + self.Player.Name + "| Boat: " + self.Name + "| Insert Y Postion (0-19): "))
+        LocalPosition = GetPosition(x,y)
+        return LocalPosition
+
+    #defence
+    def IncreaseHealth(self, Health):
+        self.Health += Health
+
+    #attack
+    def DealDamage(self, damage):
+        reflects = checkifreflect()
+        if reflects == False:
+            self.Health -= damage # * healthmultiplier
         
-        self.DefensiveStance = False
-
-        self.Perks = "none"
-            #healthmultiplier = 0.5
-        
-
-        #defence
-        def Health(self, Health):
-            self.Health += Health
-
-        #attack
-        def Damaged(self, damage):
-            reflects = checkifreflect()
-            if reflects == False:
-                self.Health -= damage # * healthmultiplier
-        
-        #Movement
-        def Move(self, MoveX, MoveY):
-            self.X += MoveX
-            self.Y += MoveY 
-        def Stance(self):
-            DefensiveStance = not DefensiveStance
-
-EmptyBoat = Boat("empty")     
+    #Movement
+    def Move(self, MoveX, MoveY):
+        self.X += MoveX
+        self.Y += MoveY 
+    def Stance(self):
+        DefensiveStance = not DefensiveStance
 
 class Position:
-    def __init__(self, player, x, y):
+    def __init__(self, x, y):
         self.ContainsBomb = True 
         self.BombActivated = False
         
@@ -76,10 +117,18 @@ class Position:
         self.Y = y 
         self.Boat = EmptyBoat
 
+    def CreatePositions(self):
+        if self == EmptyPosition:
+            print("Creating positions")
+            for y in range (0,20):
+                for x in range (0,20):
+                    LocalPosition = Position(x, y)
+                    Positions.append(LocalPosition)
+        else:
+            print("Not legal action: trying to create unnecessary positions")
+
     def BoatOnBomb(self):
         print("Boat is on bomb")
-EmptyPosition = Position(EmptyPlayer, -1, -1)
-Positions.append(EmptyPosition)
 
 ###################### GET ITEMS FROM LIST ################
 
@@ -90,89 +139,51 @@ def GetPosition(x,y):
     return EmptyPosition
 
 def GetBoat(x, y):
-    for boat in PlayerBoats:
-        if boat.X == x and boat.Y == y:
-            return boat
+    for LocalPlayers in Players:
+        for boat in LocalPlayers.Boats:
+            if boat.X == x and boat.Y == y:
+                return boat
     else: return EmptyBoat
 
 ################ VISUAL PART ####################
 def createsea():
-    print("Create visual sea: yet to be implemented\n\n")
+    print("Create visual sea: yet to be implemented!")
+    print (" " + "--" * 20 + " ")
     for y in range(19, -1, -1):
-        PrintLine = ""
+        PrintLine = "|"
         for x in range(0,20):
             LocalPosition = GetPosition(x,y)
             LocalBoat = GetBoat(x,y)
             if LocalBoat.Player == EmptyPlayer:
-                PrintLine += " "
+                PrintLine += "  "
             elif LocalBoat.Player == Player1:
-                PrintLine += "1"
+                PrintLine += " 1"
             elif LocalBoat.Player == Player2:
-                PrintLine += "2"
-        print(PrintLine)
+                PrintLine += " 2"
+        print(PrintLine + "|")
+    print (" " + "--" * 20 + " ")
    
 def createHUD():
     print("Create visual stats: yet to be implemented")             
 
 ################# SET UP GAME ################
 
-def createboats(player, GlobalBoats):
-    LocalBoats = copy.deepcopy(GlobalBoats)
-    for LocalPlayerBoats in LocalBoats:
-        
-        LocalPlayerBoats.Player = player     
-        
-        BoatPosition = GetBoatPosition(LocalPlayerBoats, GlobalBoats) #returns position class
-        LocalPlayerBoats.X = BoatPosition.X
-        LocalPlayerBoats.Y = BoatPosition.Y
-        
-        player.Boats.append(LocalPlayerBoats)
-        PlayerBoats.append(LocalPlayerBoats)
-
 def creategame():
     #players: globals so not necesarry
     #maybe add reseting their stats
-
-    #Creating positions
-    print("Creating positions")
-    for y in range (0,20):
-        for x in range (0,20):
-            LocalPosition = Position(EmptyPlayer, x, y)
-            Positions.append(LocalPosition)
-
-    #Creating boats
-
-    LocalBoat = Boat("Size 4")
-    LocalBoat.Size = 4
-    LocalBoat.AttackRange = 1
-    LocalBoat.MovementRange = 1
-    LocalBoat.Health = 4
-    Boats.append(LocalBoat)
-
-    LocalBoat = Boat("Size 3(1)")
-    LocalBoat.Size = 3
-    LocalBoat.AttackRange = 2
-    LocalBoat.MovementRange = 2
-    LocalBoat.Health = 2
-    Boats.append(LocalBoat)
-    LocalBoat = copy.deepcopy(LocalBoat)
-    LocalBoat.Name = "Size 3(2)"
-    Boats.append(LocalBoat)
     
-    LocalBoat = Boat("Size 2")
-    LocalBoat.Size = 2
-    LocalBoat.AttackRange = 1
-    LocalBoat.MovementRange = 3
-    LocalBoat.Health = 2
-    Boats.append(LocalBoat)
+    #Creating positions
+    EmptyPosition.CreatePositions()
 
-    createboats(Player1, Boats)
-    createboats(Player2, Boats)
+    #Creating boats 
+    Player1.CreateBoats()
+    Player2.CreateBoats()
+    EmptyPlayer.Boats.append(EmptyBoat)
 
 ################## ACTIONS #####################
 
 #actions: play card, attack, move 
-def attack():
+def Attack(player):
     print("Check if ship in range: yet to be implemented")
     print("Chooseboat: yet to be implemented")
     print("Attackboat: yet to be implemented")
@@ -200,8 +211,6 @@ def playcard():
     print("Play the card: yet to be implemented")
     
 ################# PLAYER ACTIONS #######################
-def Attack(player):
-    print("Attack: yet to be implemented")
 
 def ChooseBoatToMove(AvaibleBoatsToMove):
     return AvaibleBoatsToMove[0] #return boat out of AvaibleBoatsToMove
@@ -274,15 +283,6 @@ def GetAction(player):
         else:
             LocalDone = True
 
-def GetBoatPosition(PlayerBoats, GlobalBoats):
-    print("Pick Boat Position: yet to be implemented!")
-    LocalPlayer = PlayerBoats.Player
-    x = int(input("Player: " + LocalPlayer.Name + "| Boat: " + PlayerBoats.Name + "| Insert X Postion (0-19): "))
-    y = int(input("Player: " + LocalPlayer.Name + "| Boat: " + PlayerBoats.Name + "| Insert Y Postion (0-19): "))
-    LocalPosition = GetPosition(x,y)
-    return LocalPosition
-
-
 ################## PLAYER TURNS ####################
 def turn(player):
     GetAction(player)
@@ -302,6 +302,23 @@ def checkifwon():
 
 #######################################
 
+#creating classes
+EmptyBoat = NotImplemented
+EmptyPosition = NotImplemented
+EmptyPlayer = Player("empty")
+
+Players.append(EmptyPlayer)
+EmptyPosition = Position(-1, -1)
+EmptyBoat = Boat(EmptyPlayer, "empty")
+Positions.append(EmptyPosition)
+
+Player1 = Player("player1")
+Players.append(Player1)
+
+Player2 = Player("player2")
+Players.append(Player2)
+
+#starting the game
 Player_Playing = Player2
 creategame()
 
