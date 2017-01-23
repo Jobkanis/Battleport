@@ -38,10 +38,11 @@ class Game:
 
         self.Player1 = class_Player.Player(self, "player1")
         self.Players.append(self.Player1)
-        self.Player1.CreateBoats()
 
         self.Player2 = class_Player.Player(self, "player2")
         self.Players.append(self.Player2)
+
+        self.Player1.CreateBoats()
         self.Player2.CreateBoats()        
 
     def Play(self):
@@ -52,13 +53,16 @@ class Game:
             self.Player_Playing.PlayTurn()
 
 ############# USEABLE GAME FUNCTIONS #############
-    def GetPosition(self, x,y):
+    def GetPosition(self, x, y):
         for Pos in self.Positions:
             if Pos.X == x and Pos.Y == y:
                 return Pos
         return self.EmptyPosition
 
     def GetBoat(self, x, y):
+        for LocalBoats in GetBoatPositions(self):
+            if LocalBoats.X == x and LocalBoats.Y == y:
+                return LocalBoats
         for LocalPlayers in self.Players:
             for boat in LocalPlayers.Boats:
                 if boat.X == x and boat.Y == y:
@@ -66,6 +70,7 @@ class Game:
         else: return self.EmptyBoat
 
 ############### SPECIFIC GAME FUNCTIONS ###################
+
     
     def Checkifwon(self):
         print("Check if player won: yet to be implemented: return won player else EmptyPlayer")
@@ -83,3 +88,15 @@ class Game:
             for x in range (0,20):
                 LocalPosition = class_Positions.Position(self, x, y)
                 self.Positions.append(LocalPosition)    
+
+    def GetAllBoatPositions(self):
+        BoatPositions = []
+        BoatPositions += self.GetPlayerBoatPositions(self.Player1)
+        BoatPositions += self.GetPlayerBoatPositions(self.Player2)
+        return BoatPositions
+
+    def GetPlayerBoatPositions(self, Player):
+        BoatPositions = []
+        for PlayerBoats in Player.Boats:
+            BoatPositions += PlayerBoats.GetLocalBoatsPositions(True, -1, -1)
+        return BoatPositions

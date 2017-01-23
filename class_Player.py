@@ -79,13 +79,12 @@ class Player:
                         AvaibleBoatsToMove.remove(LocalBoatToMove)
 
                         self.MoveBoat(LocalBoatToMove)
-
-                else:
-                    LocalDone = True
+            else:
+                LocalDone = True
 
     def CreateBoats(self):
         self.Boats = []
-        self.Boats.append(class_Boats.Boat(self.Game, self,  "size2"))
+        self.Boats.append(class_Boats.Boat(self.Game, self, "size2"))
         self.Boats.append(class_Boats.Boat(self.Game, self, "size31"))
         self.Boats.append(class_Boats.Boat(self.Game, self, "size32"))
         self.Boats.append(class_Boats.Boat(self.Game, self, "size4"))
@@ -123,11 +122,11 @@ class Player:
                 print("Stopped moving boat")
                 LocalDone = True
 
-            if BoatToMove.Positions == False: #end reached
+            if BoatToMove.X == False: #end reached
                 print("Check if goal is reached: yet to be implemented")
                 print("Take special card: yet to be implemented")
                 print("Play the special card: yet to be implemented")
-                LocalDOne = True
+                LocalDone = True
 
 ################### Action functions ##########################
     def ChooseBoat(self, AvaibleBoats):
@@ -182,13 +181,19 @@ class Player:
 ###################### VISUAL ##############################
 
     def CreateSea(self):
+        if self == self.Game.Player1:
+            Y1 = 19; Y2 = -1; Y3 = -1
+        elif self == self.Game.Player2:
+            Y1 = 0; Y2 = 19; Y3 = 1
+
         print("Create visual sea: yet to be implemented!")
         print (" " + "--" * 20 + " ")
-        for y in range(19, -1, -1):
+        BoatPositions = self.Game.GetAllBoatPositions()
+        for y in range(Y1, Y2, Y3):
             PrintLine = "|"
             for x in range(0,20):
                 LocalPosition = self.Game.GetPosition(x,y)
-                LocalBoat = self.Game.GetBoat(x,y)
+                LocalBoat = LocalPosition.Boat
                 if LocalBoat.Player == self.Game.EmptyPlayer:
                     PrintLine += "  "
                 elif LocalBoat.Player == self.Game.Player1:

@@ -23,10 +23,15 @@ class Position:
         EmptyPosition = self.Game.EmptyPosition
 
         EmptyBoat = self.Game.EmptyBoat
+
         ###################################################
+
         self.ContainsBomb = True 
         self.BombActivated = False
   
         self.X = x 
         self.Y = y 
         self.Boat = EmptyBoat
+
+    def __str__(self):
+        return " (" + str(self.X) + " , " + str(self.Y) + ")"
