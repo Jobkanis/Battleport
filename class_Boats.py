@@ -119,15 +119,16 @@ class Boat:
 
     def ResetBoatPositions(self):
         CurrentPositions = self.GetLocalBoatsPositions(True, -1,-1,"inactive")
-        for localposition in CurrentPositions:
-            localposition.Boat = self.Game.EmptyBoat
-        
+        for Cpos in CurrentPositions:
+            localpos = self.Game.GetPosition(Cpos.X, Cpos.Y)
+            localpos.Boat = self.Game.EmptyBoat
+                    
     def UpdateBoatPositions(self):
         CurrentPositions = self.GetLocalBoatsPositions(True, -1,-1,"inactive")
-        for localposition in CurrentPositions:
-            localposition.Boat = self
-
-
+        for Cpos in CurrentPositions:
+            localpos = self.Game.GetPosition(Cpos.X, Cpos.Y)
+            localpos.Boat = self
+        print("updated")
 ############# STANCE ######################
 
     def GetPossibleDefensiveStance(self):
@@ -207,8 +208,7 @@ class Boat:
 
         TakenSpots = self.Game.GetAllBoatPositions()
         FutureBoatCoordinates = self.GetLocalBoatsPositions(False, x, y, defensivestance)
-        
-       
+
         for FutureBoatCoordinate in FutureBoatCoordinates:
             for Takenspot in TakenSpots:
                 if Takenspot.X == FutureBoatCoordinate.X and Takenspot.Y == FutureBoatCoordinate.Y:

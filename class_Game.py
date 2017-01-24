@@ -19,6 +19,7 @@ class Game:
         self.EmptyBoat = NotImplemented
         self.EmptyPosition = NotImplemented
         self.EmptyPlayer = NotImplemented
+
         self.Player1 = NotImplemented
         self.Player2 = NotImplemented
 

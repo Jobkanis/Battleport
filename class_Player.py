@@ -28,7 +28,6 @@ class Player:
         self.Name = playername
         self.Cards = []
         self.Boats = []
-        self.Points = 0
 
 ################### CALLABLE ########################
 
@@ -226,7 +225,6 @@ class Player:
 
 ###################### VISUAL ##############################
     def CreateSea(self):
-        
         if self == self.Game.Player1:
             Y1 = 19; Y2 = -1; Y3 = -1
         elif self == self.Game.Player2:
@@ -240,8 +238,7 @@ class Player:
             for x in range(0,20):
                 for positions in self.Game.Positions:
                     if positions.X == x and positions.Y == y:
-                        LocalPosition = positions
-                        LocalBoat = LocalPosition.Boat
+                        LocalBoat = positions.Boat
                         if LocalBoat.Player == self.Game.EmptyPlayer:
                             PrintLine += "  "
                         elif LocalBoat.Player == self.Game.Player1:
