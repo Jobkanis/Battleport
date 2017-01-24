@@ -11,9 +11,8 @@ import class_Game
 class Player:
     def __init__(self, gameclass, playername):
         ####################################################
-        self.Game = gameclass
-
         #For educational purposes
+        self.Game = gameclass
         Players = self.Game.Players
         EmptyPlayer= self.Game.EmptyPlayer
         Player1 = self.Game.Player1
@@ -32,15 +31,19 @@ class Player:
 ################### CALLABLE ########################
 
     def PlayTurn(self):
-        #Creating possibleaction values: for keeping track what the user did and can still do
+##########################Creating possibleaction value #########################
+############for keeping track what the user did and can still do#################
 
-        AvaibleBoatsToMove = copy.deepcopy(self.Boats)
+        AvaibleBoatsToMove = []
+        for LocalBoat in self.Boats:
+            AvaibleBoatsToMove.append(LocalBoat.Name)
 
         AvaibleAttacks_No = 2
-        AvaibleBoatsToAttack = copy.deepcopy(self.Boats)
+        AvaibleBoatsToAttack = []
+        for LocalBoat in self.Boats:
+            AvaibleBoatsToAttack.append(LocalBoat.Name)
 
         AvaiblePlayCards_No = 2
-    
 
         #Taking a card
         if len(self.Cards) < 7:
@@ -60,23 +63,26 @@ class Player:
 
                     #Actions: LocalAction = chosen action by user: returns "play cards", "attack", "move boat"
                     LocalAction = self.ChooseAction(AvaiblePlayCards_No, AvaibleAttacks_No, AvaibleBoatsToMove)
-
+                    
                     #Doing Action
                     if LocalAction == "play cards":
                         AvaiblePlayCards_No -= 1
                         self.PlayCards()
 
                     if LocalAction == "attack":
-                        LocalBoatToAttack = self.ChooseBoat(AvaibleBoatsToAttack) #returns boat class
+                        LocalBoatToAttack = self.ChooseBoat(AvaibleBoatsToAttack) #returns boat name
+                        AvaibleBoatsToAttack.remove(LocalBoatToAttack)
+                        LocalBoatToAttack = self.GetBoatFromName(LocalBoatToAttack)
 
                         AvaibleAttacks_No -= 1
-                        AvaibleBoatsToAttack.remove(LocalBoatToAttack)
+                        
 
                         self.Attack()
 
                     if LocalAction == "move boat":
                         LocalBoatToMove = self.ChooseBoat(AvaibleBoatsToMove)
                         AvaibleBoatsToMove.remove(LocalBoatToMove)
+                        LocalBoatToMove = self.GetBoatFromName(LocalBoatToMove)
                         self.MoveBoat(LocalBoatToMove)
             else:
                 LocalDone = True
@@ -110,7 +116,7 @@ class Player:
 
             self.CreateSea() #visual!
 
-            InputText = "Possible actions( "
+            InputText = "Possible actions("
             if len(PossibleStanceActions) > 0:
                 InputText += "stance "
             InputText += "move stop" 
@@ -143,25 +149,37 @@ class Player:
         print("Choosing a boat: yet to be implemented")
         return AvaibleBoats[0]
 
-    def ChangeStance(self, boat, PossibleActions):
-        if len(PossibleActions) > 0:
+    def ChangeStance(self, boat, PossibleStance):
+        if len(PossibleStance) > 0:
+
+            PossibleStanceInactive = False
             PossibleStanceLeft = False
             PossibleStanceRight = False
-            PossibleStanceInactive = False
 
-            InputText = "Change stance too: "
-            for actions in PossibleActions:
-                if actions == "inactive":
+            for LocalPossibleStance in PossibleStance:
+                if LocalPossibleStance == "inactive":
                     PossibleStanceInactive = True
-                    InputText += "inactive "
-                if actions == "left":
+                elif LocalPossibleStance == "left":
                     PossibleStanceLeft = True
-                    InputText += "left "
-                if actions == "right":
+                elif LocalPossibleStance == "right":
                     PossibleStanceRight = True
-                    InputText += "right "
-    
+
+        ############## GET INPUT AND POSSIBLESTANCE ######################
+            InputText = "Change stance too: "
+
+            if PossibleStanceInactive == True:
+                InputText += "inactive "
+
+            if PossibleStanceLeft == True:
+                InputText += "left "
+
+            if PossibleStanceRight == True:
+                InputText += "right "
+
             LocalInput = input(InputText) #making player choose
+    
+       ###################################################################
+
             if PossibleStanceInactive == True and LocalInput == "inactive":
                 boat.ChangeBoatStance("inactive")
             elif PossibleStanceLeft == True and LocalInput == "left":
@@ -217,11 +235,18 @@ class Player:
 
 ################### OTHER FUNCTIONS #######################
 
-    def GetPlayerBoatPositions(self):
+    def GetPlayerBoatPositions(self, exception):
         BoatPositions = []
         for PlayerBoats in self.Boats:
-            BoatPositions += PlayerBoats.GetLocalBoatsPositions(True, -1, -1, "inactive")
+            if PlayerBoats not in exception:
+                BoatPositions += PlayerBoats.GetLocalBoatsPositions(True, -1, -1, "inactive")
         return BoatPositions
+
+    def GetBoatFromName(self,BoatName):
+        Boats = self.Boats
+        for LocalBoat in Boats:
+            if LocalBoat.Name == BoatName:
+                return LocalBoat
 
 ###################### VISUAL ##############################
     def CreateSea(self):

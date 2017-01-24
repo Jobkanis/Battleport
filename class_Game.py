@@ -91,10 +91,10 @@ class Game:
                 LocalPosition = class_Positions.Position(self, x, y)
                 self.Positions.append(LocalPosition)    
 
-    def GetAllBoatPositions(self):
+    def GetAllBoatPositions(self, exception): #exception is list
         BoatPositions = []
-        BoatPositions += self.Player1.GetPlayerBoatPositions()
-        BoatPositions += self.Player2.GetPlayerBoatPositions()
+        BoatPositions += self.Player1.GetPlayerBoatPositions(exception) #exception
+        BoatPositions += self.Player2.GetPlayerBoatPositions(exception) #exception
         return BoatPositions
 
     def ToughUpdateBoats(self):

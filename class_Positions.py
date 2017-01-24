@@ -11,9 +11,8 @@ import class_Game
 class Position:
     def __init__(self, gameclass, x, y):
         ####################################################
-        self.Game = gameclass
-
         #For educational purposes
+        self.Game = gameclass
         Players = self.Game.Players
         EmptyPlayer= self.Game.EmptyPlayer
         Player1 = self.Game.Player1
