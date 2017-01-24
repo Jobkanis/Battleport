@@ -35,6 +35,13 @@ class Boat:
         self.Y_AttackRange = 0
         self.DefensiveRange = 0
 
+        self.Perks = "none"
+        #differentStance = ["inactive", "left", "right"]
+        self.DefensiveStance = "inactive"
+
+        self.X = -1
+        self.Y = -1
+
         if self.Player == EmptyPlayer: 
             LocalBoatName = -1
         elif self.Player == Player1:
@@ -80,20 +87,68 @@ class Boat:
                 self.Y_AttackRange = 4
                 self.DefensiveRange = 5          
         
-        self.Perks = "none"
-        self.DefensiveStance = False
-
-        self.X = -1
-        self.Y = -1
         if self.Player != EmptyPlayer:
             BoatPosition = self.PickBoatPosition() #returns position class
             if BoatPosition in self.Game.Positions: #makes sure the position exists: fixes error in creating empty class"
                 self.X = BoatPosition.X
                 self.Y = BoatPosition.Y
                 BoatPosition.Boat = self
-                TakenPositions = self.GetLocalBoatsPositions(True, -1, -1)
+                TakenPositions = self.GetLocalBoatsPositions(True, -1, -1, "inactive")
                 for LocalPosition in TakenPositions:
                     LocalPosition.Boat = self
+
+############# POSITION CHANGE #############
+    def ChangeBoatPosition(self, plus, yplus):
+        if self.CheckIfPositionTaken(self.X + xplus, self.Y + yplus, self.DefensiveStance) == True:
+            self.ResetBoatPositions()
+            self.X += xplus
+            self.Y += yplus
+            self.UpdateBoatPositions()
+            print("PositionChange succes!")
+        else:
+            print("Error: changing position not possible!")
+
+    def ChangeBoatStance(self, FutureStance):
+        if self.CheckIfPositionTaken(self.X, self.Y, FutureStance) == True:
+            self.ResetBoatPositions()
+            self.DefensiveStance = FutureStance
+            self.UpdateBoatPositions()
+            print("stance is changed!")
+        else:
+            print("Error: changing stance not possible!")
+
+    def ResetBoatPositions(self):
+        CurrentPositions = self.GetLocalBoatsPositions(True, -1,-1,"inactive")
+        for localposition in CurrentPositions:
+            localposition.Boat = self.Game.EmptyBoat
+        
+    def UpdateBoatPositions(self):
+        CurrentPositions = self.GetLocalBoatsPositions(True, -1,-1,"inactive")
+        for localposition in CurrentPositions:
+            localposition.Boat = self
+
+
+############# STANCE ######################
+
+    def GetPossibleDefensiveStance(self):
+        PossileLeftStance = self.CheckIfPositionTaken(self.X, self.Y, "left")
+        PossibleRightStance = self.CheckIfPositionTaken(self.X, self.Y, "right")
+        PossibleInactiveStance = self.CheckIfPositionTaken(self.X, self.Y, "right")
+        
+        PossibleActions = []
+        
+        if self.DefensiveStance == "inactive":
+            if PossileLeftStance == True:
+                PossibleActions.append("left")
+            if PossibleRightStance == True:
+                PossibleActions.append("right")
+        elif self.DefensiveStance == "left" or self.DefensiveStance == "right":
+            if PossibleInactiveStance == True:
+                PossibleActions.append("inactive")
+
+        return PossibleActions
+
+############# PICK BOAT ###################
 
     def PickBoatPosition(self):
 
@@ -119,7 +174,7 @@ class Boat:
 
             ###############################################################
 
-            check = self.CheckIfPositionTaken( x, y)
+            check = self.CheckIfPositionTaken( x, y, "inactive")
             
             if check == False:
                 print("Boat could not be placed on coordinates: " + str(x) + " , " + str(y))
@@ -130,10 +185,28 @@ class Boat:
         #when finally a good coordinate: return the position
         return self.Game.GetPosition(x,y) 
 
-    def CheckIfPositionTaken(self, x, y):
+    def CheckIfStancePossible(self):
+            PossileLeftStance = CheckIfPositionTaken(self, False, self.X, self.Y, "left")
+            PossibleRightStance = CheckIfPositionTaken(self, self.X, self.Y, "right")
+            PossibleInactiveStance = CheckIfPositionTaken(self, self.X, self.Y, "inactive")
+            PossibleActions = []
+        
+            if self.DefensiveStance == "inactive":
+                if PossibleLeftStance == True:
+                    PossibleActions.append("left")
+                if PossibleRightStance == True:
+                    PossibleActions.append("left")
+            elif self.DefensiveStance == "left" or self.DefensiveStance == "right":
+                if PossibleInactiveStance == True:
+                    PossibleActions.append("inactive")
+
+            return PossibleActions
+
+############## POSITION CHECKS ############
+    def CheckIfPositionTaken(self, x, y, defensivestance):
 
         TakenSpots = self.Game.GetAllBoatPositions()
-        FutureBoatCoordinates = self.GetLocalBoatsPositions(False, x, y)
+        FutureBoatCoordinates = self.GetLocalBoatsPositions(False, x, y, defensivestance)
         
        
         for FutureBoatCoordinate in FutureBoatCoordinates:
@@ -144,26 +217,26 @@ class Boat:
                  return False
         return True
 
-    def GetLocalBoatsPositions(self, UseCurrentPosition, x, y):  #when usecurrentposition == True: x and y don't matter  
+    def GetLocalBoatsPositions(self, UseCurrentPosition, x, y, defensivestance):  #when usecurrentposition == True: x and y don't matter  
         if UseCurrentPosition == True:
             X = self.X
             Y = self.Y
+            LocalDefensiveStance = self.DefensiveStance
         else:
             X = x
             Y = y
-
-        Game = self.Game
-        Player1 = self.Game.Player1
-        Player2 = self.Game.Player2
-        Positions = self.Game.Positions
+            LocalDefensiveStance = defensivestance
 
         BoatPositions = []
         for i in range(0, self.Size):
-            if self.DefensiveStance == False:
-                if self.Player == Player1:
-                    BoatPositions.append(Game.GetPosition(X, Y - i))
-                elif self.Player == Player2:
-                    BoatPositions.append(Game.GetPosition(X, Y + i))
-            else:
-                BoatPositions.append(Game.Positions(X + i, Y))
+            if LocalDefensiveStance == "inactive":
+                if self.Player == self.Game.Player1:
+                    BoatPositions.append(self.Game.GetPosition(X, Y - i))
+                elif self.Player == self.Game.Player2:
+                    BoatPositions.append(self.Game.GetPosition(X, Y + i))
+            elif LocalDefensiveStance == "right":
+                BoatPositions.append(self.Game.GetPosition(X + i, Y))
+            elif LocalDefensiveStance == "left":
+                BoatPositions.append(self.Game.GetPosition(X - i, Y))
         return BoatPositions
+    

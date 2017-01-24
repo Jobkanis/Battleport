@@ -9,7 +9,7 @@ import class_Positions
 import class_Game
 
 class Player:
-    def __init__(self, gameclass, playername, ):
+    def __init__(self, gameclass, playername):
         ####################################################
         self.Game = gameclass
 
@@ -31,6 +31,7 @@ class Player:
         self.Points = 0
 
 ################### CALLABLE ########################
+
     def PlayTurn(self):
         #Creating possibleaction values: for keeping track what the user did and can still do
 
@@ -77,7 +78,6 @@ class Player:
                     if LocalAction == "move boat":
                         LocalBoatToMove = self.ChooseBoat(AvaibleBoatsToMove)
                         AvaibleBoatsToMove.remove(LocalBoatToMove)
-
                         self.MoveBoat(LocalBoatToMove)
             else:
                 LocalDone = True
@@ -101,24 +101,34 @@ class Player:
         print("Attackboat: yet to be implemented")
 
     def MoveBoat(self, BoatToMove):
-        print("Chooseboat: yet to be implemented")
         AvaibleMovements = BoatToMove.MovementRange
         LocalDone = False
 
         while AvaibleMovements > 0 and LocalDone == False:
+            PossibleStanceActions = BoatToMove.GetPossibleDefensiveStance()
+
             print("You have " + str(AvaibleMovements) + " movements left.")
-            Input = input("Stance, Move, stop?")
 
-            if Input == "stance":
-                print("Change stance mode: yet to be implemented")
+            self.CreateSea() #visual!
+
+            InputText = "Possible actions( "
+            if len(PossibleStanceActions) > 0:
+                InputText += "stance "
+            InputText += "move stop" 
+            InputText += "): "
+
+            LocalInput = input(InputText)
+
+            if len(PossibleStanceActions) > 0 and LocalInput == "stance":
                 AvaibleMovements -= 1
+                self.ChangeStance(BoatToMove, PossibleStanceActions)
 
-            if Input == "move":
+            if LocalInput == "move":
                 print("Choose boat direction: yet to be implemented")
                 print("Moveboat: yet to be implemented")
                 AvaibleMovements -= 1
 
-            if Input == "stop":
+            if LocalInput == "stop":
                 print("Stopped moving boat")
                 LocalDone = True
 
@@ -129,11 +139,39 @@ class Player:
                 LocalDone = True
 
 ################### Action functions ##########################
+
     def ChooseBoat(self, AvaibleBoats):
         print("Choosing a boat: yet to be implemented")
         return AvaibleBoats[0]
 
+    def ChangeStance(self, boat, PossibleActions):
+        if len(PossibleActions) > 0:
+            PossibleStanceLeft = False
+            PossibleStanceRight = False
+            PossibleStanceInactive = False
+
+            InputText = "Change stance too: "
+            for actions in PossibleActions:
+                if actions == "inactive":
+                    PossibleStanceInactive = True
+                    InputText += "inactive "
+                if actions == "left":
+                    PossibleStanceLeft = True
+                    InputText += "left "
+                if actions == "right":
+                    PossibleStanceRight = True
+                    InputText += "right "
+    
+            LocalInput = input(InputText) #making player choose
+            if PossibleStanceInactive == True and LocalInput == "inactive":
+                boat.ChangeBoatStance("inactive")
+            elif PossibleStanceLeft == True and LocalInput == "left":
+                boat.ChangeBoatStance("left")
+            elif PossibleStanceRight == True and LocalInput == "right":
+                boat.ChangeBoatStance("right")
+
 ################### PickAction functions ##########################
+
     def Ask_End_Turn(self):
         LocalInput = input("End turn? (yes/no): ")
         if LocalInput == "yes":
@@ -178,36 +216,37 @@ class Player:
         
         return LocalAction   #returns "play cards", "attack", "move boat"
 
-
 ################### OTHER FUNCTIONS #######################
 
     def GetPlayerBoatPositions(self):
         BoatPositions = []
         for PlayerBoats in self.Boats:
-            BoatPositions += PlayerBoats.GetLocalBoatsPositions(True, -1, -1)
+            BoatPositions += PlayerBoats.GetLocalBoatsPositions(True, -1, -1, "inactive")
         return BoatPositions
 
 ###################### VISUAL ##############################
-
     def CreateSea(self):
+        
         if self == self.Game.Player1:
             Y1 = 19; Y2 = -1; Y3 = -1
         elif self == self.Game.Player2:
-            Y1 = 0; Y2 = 19; Y3 = 1
+            Y1 = 0; Y2 = 20; Y3 = 1
 
         print("Create visual sea: yet to be implemented!")
         print (" " + "--" * 20 + " ")
-        BoatPositions = self.Game.GetAllBoatPositions()
+
         for y in range(Y1, Y2, Y3):
-            PrintLine = "|"
+            PrintLine = str(y) + "|"
             for x in range(0,20):
-                LocalPosition = self.Game.GetPosition(x,y)
-                LocalBoat = LocalPosition.Boat
-                if LocalBoat.Player == self.Game.EmptyPlayer:
-                    PrintLine += "  "
-                elif LocalBoat.Player == self.Game.Player1:
-                    PrintLine += " 1"
-                elif LocalBoat.Player == self.Game.Player2:
-                    PrintLine += " 2"
+                for positions in self.Game.Positions:
+                    if positions.X == x and positions.Y == y:
+                        LocalPosition = positions
+                        LocalBoat = LocalPosition.Boat
+                        if LocalBoat.Player == self.Game.EmptyPlayer:
+                            PrintLine += "  "
+                        elif LocalBoat.Player == self.Game.Player1:
+                            PrintLine += " 1"
+                        elif LocalBoat.Player == self.Game.Player2:
+                            PrintLine += " 2"
             print(PrintLine + "|")
         print (" " + "--" * 20 + " ")

@@ -51,8 +51,10 @@ class Game:
             self.Player_Playing = self.NextPlayer()
             print("\nIt is " + self.Player_Playing.Name + " his turn")
             self.Player_Playing.PlayTurn()
+            print("next player")
 
 ############# USEABLE GAME FUNCTIONS #############
+
     def GetPosition(self, x, y):
         for Pos in self.Positions:
             if Pos.X == x and Pos.Y == y:
@@ -71,7 +73,6 @@ class Game:
 
 ############### SPECIFIC GAME FUNCTIONS ###################
 
-    
     def Checkifwon(self):
         print("Check if player won: yet to be implemented: return won player else EmptyPlayer")
         return self.EmptyPlayer
@@ -94,3 +95,22 @@ class Game:
         BoatPositions += self.Player1.GetPlayerBoatPositions()
         BoatPositions += self.Player2.GetPlayerBoatPositions()
         return BoatPositions
+
+    def ToughUpdateBoats(self):
+        positions = self.Positions
+        Player1Boats = self.Player1.Boats
+        Player2Boats = self.Player2.Boats
+        for localpositions in positions:
+            localpositions.Boat = self.EmptyBoat
+
+            for p1boats in Player1Boats:
+                allboatpositions = p1boats.GetLocalBoatsPositions(True, -1, -1, "inactive")
+                for p1allboats in allboatpositions:
+                    if p1allboats.X == localpositions.X and p1allboats.Y == localpositions.Y:
+                        localpositions.Boat = p1boats
+
+            for p2boats in Player2Boats:
+                allboatpositions = p2boats.GetLocalBoatsPositions(True, -1, -1, "inactive")
+                for p2allboats in allboatpositions:
+                    if p2allboats.X == localpositions.X and p2allboats.Y == localpositions.Y:
+                        localpositions.Boat = p2boats
