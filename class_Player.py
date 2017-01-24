@@ -178,6 +178,15 @@ class Player:
         
         return LocalAction   #returns "play cards", "attack", "move boat"
 
+
+################### OTHER FUNCTIONS #######################
+
+    def GetPlayerBoatPositions(self):
+        BoatPositions = []
+        for PlayerBoats in self.Boats:
+            BoatPositions += PlayerBoats.GetLocalBoatsPositions(True, -1, -1)
+        return BoatPositions
+
 ###################### VISUAL ##############################
 
     def CreateSea(self):

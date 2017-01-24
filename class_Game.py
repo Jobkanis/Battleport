@@ -91,12 +91,6 @@ class Game:
 
     def GetAllBoatPositions(self):
         BoatPositions = []
-        BoatPositions += self.GetPlayerBoatPositions(self.Player1)
-        BoatPositions += self.GetPlayerBoatPositions(self.Player2)
-        return BoatPositions
-
-    def GetPlayerBoatPositions(self, Player):
-        BoatPositions = []
-        for PlayerBoats in Player.Boats:
-            BoatPositions += PlayerBoats.GetLocalBoatsPositions(True, -1, -1)
+        BoatPositions += self.Player1.GetPlayerBoatPositions()
+        BoatPositions += self.Player2.GetPlayerBoatPositions()
         return BoatPositions
