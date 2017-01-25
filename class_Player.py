@@ -51,12 +51,17 @@ class Player:
         if len(self.Cards) < 7:
             print("Takecard: yet to be implemented")
 
-
         #The actual possible moves the player can do (loop)
         LocalDone = False
         while LocalDone == False:
+            
+
+
             if len(AvaibleBoatsToMove) > 0 or  AvaibleAttacks_No > 0 or AvaiblePlayCards_No > 0:
                 
+                AbleToChooseBoat = True
+               
+                print("Choose boat or play cards")
                 self.CreateSea() #VISUAL
 
                 LocalDone = self.Ask_End_Turn() #Check if player wants to end turn
@@ -264,6 +269,7 @@ class Player:
             return False
     
     def ChooseAction(self, AvaiblePlayCards_No, AvaibleAttacks_No, AvaibleBoatsToMove):
+        
         #adding possible actions to list
         PossibleActions = []
 

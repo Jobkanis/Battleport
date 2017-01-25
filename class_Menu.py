@@ -1,5 +1,5 @@
-import battleport
 import pygame
+import class_Game
 
 ################  IMAGES  ################
 
@@ -33,34 +33,39 @@ x_but = [pygame.image.load('but/X_button.png') , pygame.image.load('but/X_button
 
 class Menu:
 
-    def __init__ (self):
+    def __init__ (self, gameDisplay, clock, width, height):
+        self.Display = gameDisplay
+        self.Clock = clock
+        self.Width = width
+        self.Height = height
+        self.Size = (width, height)
 
         self.loop = True
 
 
+        #colours
+        self.darkblue = (15,15,23)
+    
     def show_logo (self):
 
         pos_x = 15
         pos_y = 15
         pos = (pos_x,pos_y)
-        battleport.gameDisplay.blit(logoimg,pos)
-
+        self.Display.blit(logoimg,pos)
 
     def show_backgroundship (self):
 
-        pos_x = (battleport.width*0.5) - 360
-        pos_y = (battleport.height*0.5) - 177
+        pos_x = (self.Width*0.5) - 360
+        pos_y = (self.Height*0.5) - 177
         pos = (pos_x,pos_y)
-        battleport.gameDisplay.blit(backgroundshipimg,pos)
-
+        self.Display.blit(backgroundshipimg,pos)
 
     def show_top10 (self):
 
-        pos_x = battleport.width*0.1
-        pos_y = battleport.height*0.3
+        pos_x = self.Width*0.1
+        pos_y = self.Height*0.3
         pos = (pos_x,pos_y)
-        battleport.gameDisplay.blit(top10img,pos)
-
+        self.Display.blit(top10img,pos)
 
     def button (self, button, x, y, width, height, event=None):
 
@@ -69,7 +74,7 @@ class Menu:
 
         if (x + width) > mouse[0] > x and (y + height) > mouse[1] > y:
             
-            battleport.gameDisplay.blit(button[1],(x,y))
+            self.Display.blit(button[1],(x,y))
 
             if click[0] == 1 and event != None:
 
@@ -86,10 +91,7 @@ class Menu:
 
 
         else:
-           battleport.gameDisplay.blit(button[0],(x,y))
-
-
-
+           self.Display.blit(button[0],(x,y))
 
     ################  MENU'S  ################
 
@@ -97,8 +99,8 @@ class Menu:
 
         self.show_top10()
 
-        but_x = battleport.width * 0.65
-        but_y = battleport.height * 0.35
+        but_x = self.Width * 0.65
+        but_y = self.Height * 0.35
 
         self.button(newgame_but, but_x, but_y, 268, 68, 'new game')
         but_y += 100
@@ -108,11 +110,10 @@ class Menu:
 
         self.button(exit_but, but_x, but_y, 268, 68, 'exit')
 
-
     def show_new_game (self):
 
-        but_x = (battleport.width * 0.5) - 134
-        but_y = battleport.height * 0.3
+        but_x = (self.Width * 0.5) - 134
+        but_y = self.Height * 0.3
 
         self.button(chooseplayers_but, but_x, but_y, 268, 68, 'next turn')
         but_y += 130
@@ -122,53 +123,49 @@ class Menu:
 
         self.button(back_but, but_x, but_y, 268, 68, 'back main')
 
-
     def show_help_1 (self):
 
-        pos_x = (battleport.width * 0.5) - 400
-        pos_y = (battleport.height * 0.5) - 300
+        pos_x = (self.Width * 0.5) - 400
+        pos_y = (self.Height * 0.5) - 300
         pos = (pos_x, pos_y)
 
-        battleport.gameDisplay.blit(helpimg[0],pos)
+        self.Display.blit(helpimg[0],pos)
 
-        but_x = (battleport.width * 0.5) - 134
-        but_y = battleport.height * 0.8
+        but_x = (self.Width * 0.5) - 134
+        but_y = self.Height * 0.8
 
         self.button(nextpage_but, but_x, but_y, 268, 68, 'help page 2')
 
         but_y = 20
-        but_x = battleport.width - 88
+        but_x = self.Width - 88
 
         self.button(x_but, but_x, but_y, 268, 68, 'back main')
 
     def show_help_2 (self):
 
-        pos_x = (battleport.width * 0.5) - 400
-        pos_y = (battleport.height * 0.5) - 300
+        pos_x = (self.Width * 0.5) - 400
+        pos_y = (self.Height * 0.5) - 300
         pos = (pos_x, pos_y)
 
-        battleport.gameDisplay.blit(helpimg[1],pos)
+        self.Display.blit(helpimg[1],pos)
 
-        but_x = (battleport.width * 0.5) - 134
-        but_y = battleport.height * 0.8
+        but_x = (self.Width * 0.5) - 134
+        but_y = self.Height * 0.8
 
         self.button(back_but, but_x, but_y, 268, 68, 'help')
 
         but_y = 20
-        but_x = battleport.width - 88
+        but_x = self.Width - 88
 
         self.button(x_but, but_x, but_y, 268, 68, 'back main')
 
-
     def show_nextturn (self):
 
-        but_x = (battleport.width*0.5) - 134
-        but_y = (battleport.height*0.65)
+        but_x = (self.Width*0.5) - 134
+        but_y = (self.Height*0.65)
 
         self.button(startturn_but, but_x, but_y, 268, 68, 'back main')
     ##########################################
-
-
 
     ################  FUNCTIONS  ################
 
@@ -183,15 +180,14 @@ class Menu:
                     self.loop = False
                     self.exit()
 
-            battleport.gameDisplay.fill(battleport.darkblue)
+            self.Display.fill(self.darkblue)
         
             self.show_backgroundship()
             self.show_logo()
 
             self.show(name)
 
-            self.menu_end()
-
+            self.menu_display_refresh()
 
     def show(self, name):
 
@@ -219,14 +215,12 @@ class Menu:
 
             self.show_main()
 
-
-    def menu_end (self):
+    def menu_display_refresh (self):
 
         pygame.display.flip()
-        battleport.clock.tick(15)
-
+        self.Clock.tick(15)
 
     def exit (self):
 
-        pygame.quit()
-        quit()
+       pygame.quit()
+       quit()

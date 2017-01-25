@@ -248,6 +248,7 @@ class Boat:
         return self.Game.GetPosition(x,y) 
 
 ############## POSITION CHECKS ############
+
     def CheckIfPositionTaken(self, x, y, defensivestance):
 
 
