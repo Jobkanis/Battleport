@@ -99,7 +99,14 @@ class Boat:
 
 ############# POSITION CHANGE #############
 
-    def ChangeBoatPosition(self, plus, yplus):
+    def ChangeBoatPosition(self, PositionToMove):
+        xplus = 0
+        yplus = 0
+
+        NextPosition = self.GetXandYchangeoutofpositionChange(PositionToMove)
+        xplus = NextPosition[0]
+        yplus = NextPosition[1]
+
         if self.CheckIfPositionTaken(self.X + xplus, self.Y + yplus, self.DefensiveStance) == True:
             self.ResetBoatPositions()
             self.X += xplus
@@ -131,6 +138,28 @@ class Boat:
             localpos.Boat = self
         print("updated")
 
+    def GetXandYchangeoutofpositionChange(self, PositionToMove): #returns [xplus, yplus]
+        xplus = 0
+        yplus = 0
+
+        if  PositionToMove == "left":
+            xplus += -1
+        elif PositionToMove == "right":    
+            xplus += 1
+
+        elif self.Player == self.Game.Player1:
+            if PositionToMove == "forward":
+                yplus += 1
+            elif PositionToMove == "backward":
+                yplus += -1
+
+        elif self.Player == self.Game.Player2:
+            if PositionToMove == "forward":
+                yplus -= 1
+            elif PositionToMove == "backward":
+                yplus -= -1        
+        return [xplus, yplus]
+
 ############# STANCE ######################
 
     def GetPossibleDefensiveStance(self):
@@ -153,6 +182,33 @@ class Boat:
                 PossibleActions.append("inactive")
 
         return PossibleActions #returns list of possible stance ("left", "right", "inactive")
+
+    def GetPossibleMovement(self):  #returns list of possible movement actions ("left", "right", "forward", "backward")
+        PossibleActions = []
+        if self.DefensiveStance == "inactive":
+            
+            LocalPosition = self.GetXandYchangeoutofpositionChange("left")
+            PossileLeft = self.CheckIfPositionTaken(self.X + LocalPosition[0], self.Y + LocalPosition[1], self.DefensiveStance)
+
+            LocalPosition = self.GetXandYchangeoutofpositionChange("right")
+            PossibleRight = self.CheckIfPositionTaken(self.X + LocalPosition[0], self.Y + LocalPosition[1], self.DefensiveStance)
+
+            LocalPosition = self.GetXandYchangeoutofpositionChange("forward")
+            PossibleForward = self.CheckIfPositionTaken(self.X + LocalPosition[0], self.Y + LocalPosition[1], self.DefensiveStance)
+
+            LocalPosition = self.GetXandYchangeoutofpositionChange("backward")
+            PossibleBackward = self.CheckIfPositionTaken(self.X + LocalPosition[0], self.Y + LocalPosition[1], self.DefensiveStance)
+            
+            if PossileLeft == True:
+                PossibleActions.append("left")    
+            if PossibleRight == True:
+                PossibleActions.append("right")
+            if PossibleForward == True:
+                PossibleActions.append("forward")
+            if PossibleBackward == True:
+                PossibleActions.append("backward")
+            
+        return PossibleActions
 
 ############# PICK BOAT ###################
 
