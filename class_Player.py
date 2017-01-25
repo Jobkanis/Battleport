@@ -9,6 +9,7 @@ import class_Positions
 import class_Game
 
 class Player:
+
     def __init__(self, gameclass, playername):
         ####################################################
         #For educational purposes
@@ -238,8 +239,9 @@ class Player:
     def GetPlayerBoatPositions(self, exception):
         BoatPositions = []
         for PlayerBoats in self.Boats:
-            if PlayerBoats not in exception:
-                BoatPositions += PlayerBoats.GetLocalBoatsPositions(True, -1, -1, "inactive")
+            for ExceptionBoats in exception:
+                if PlayerBoats.Name != ExceptionBoats.Name:
+                    BoatPositions += PlayerBoats.GetLocalBoatsPositions(True, -1, -1, "inactive")
         return BoatPositions
 
     def GetBoatFromName(self,BoatName):

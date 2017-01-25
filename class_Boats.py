@@ -134,6 +134,7 @@ class Boat:
 ############# STANCE ######################
 
     def GetPossibleDefensiveStance(self):
+
         PossileLeftStance = self.CheckIfPositionTaken(self.X, self.Y, "left")
         PossibleRightStance = self.CheckIfPositionTaken(self.X, self.Y, "right")
         PossibleInactiveStance = self.CheckIfPositionTaken(self.X, self.Y, "inactive")
@@ -191,8 +192,8 @@ class Boat:
         return self.Game.GetPosition(x,y) 
 
 ############## POSITION CHECKS ############
-
     def CheckIfPositionTaken(self, x, y, defensivestance):
+
 
         Exception = []
         Exception.append(self)
@@ -202,15 +203,13 @@ class Boat:
 
         for FutureBoatCoordinate in FutureBoatCoordinates:
             for Takenspot in TakenSpots:
-                if Takenspot.X == FutureBoatCoordinate.X and Takenspot.Y == FutureBoatCoordinate.Y:
-                    if Takenspot.X != self.X and Takenspot.Y != self.Y:                             #make sure it is not the standard one
+                if (Takenspot.X, Takenspot.Y) == (FutureBoatCoordinate.X, FutureBoatCoordinate.Y):                        #make sure it is not the standard one
                         return False
 
             if FutureBoatCoordinate == self.Game.EmptyPosition:
                  return False
 
-        return True
-    
+        return True 
 
     def GetLocalBoatsPositions(self, UseCurrentPosition, x, y, defensivestance):  #when usecurrentposition == True: x and y don't matter  
         
