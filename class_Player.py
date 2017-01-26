@@ -88,8 +88,6 @@ class Player:
             if AvaiblePlayCards_No > 0:
                 AbleToPlayCards = True
 
-
-
             ######## PHASE 1: PICKING A BOAT FOR ACTION OR CHOOSING CARD PLAY #######
             if AbleToBoatAction == True or AbleToMove == True or AbleToPlayCards == True:
 
@@ -277,7 +275,7 @@ class Player:
 
 
     def GetBoatsAbleToAttack(self, AvaibleBoatsToAttack): #return list of boats able to attack
-        print("GetBoatsAbleTOAttack - returns list of boats able to attack: yet to be implemented"
+        print("GetBoatsAbleTOAttack - returns list of boats able to attack: yet to be implemented")
         return self.Boats
 
     def GetBoatsAbleToMove(self, AvaibleBoatsToMove): #return list of boats able to move
