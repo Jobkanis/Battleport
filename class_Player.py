@@ -29,7 +29,6 @@ class Player:
         self.Cards = []
         self.Boats = []
 
-
     def PlayTurn(self):
         #Creating possibleaction value
         #for keeping track what the user did and can still do
@@ -55,7 +54,6 @@ class Player:
 
         while LocalDone == False:
             Actions = ["boataction", "play cards", "end turn"]
-            
 
             ################# GETTING EASY TRUE/FALSE STATEMENTS ###############################
             # ATTACK AND MOVE
@@ -97,7 +95,7 @@ class Player:
                 #if AbleToPlayCards == True:
                 #    PossibleActions.append("play cards")
                 
-                ActionPhase1 = ChooseActionPhase1(BoatsAbleToMove, BoatsAbleToAttack, AvaiblePlayCards_No) #returns boatclass for boataction, returns 'play cards' or 'end turn'
+                ActionPhase1 = self.ChooseActionPhase1(BoatsAbleToMove, BoatsAbleToAttack, AvaiblePlayCards_No) #returns boatclass for boataction, returns 'play cards' or 'end turn'
 
                 if ActionPhase1 in BoatsAbleToAttack or ActionPhase1 in BoatsAbleToMove:  #returned a boat to move
                     ############# PHASE 2: PICKING A BOAT ACTION #########################
@@ -111,7 +109,7 @@ class Player:
                     CheckPoint = False
                     while CheckPoint == False:
                    
-                        BoatAction = ChooseBoatActionPhase2(Boat) #returns 'attack when pressed attack, returns 'move' when pressed move, returns 'cancle' when cancled
+                        BoatAction = self.ChooseBoatActionPhase2(Boat) #returns 'attack when pressed attack, returns 'move' when pressed move, returns 'cancle' when cancled
                         
                         if BoatAction == "attack":
                             ######################### PHASE 3: ATTACKING A BOAT #####################################
@@ -122,7 +120,7 @@ class Player:
                         elif BoatAction == "move":
                             ######################### PHASE 3: MOVING A BOAT #####################################
                             AvaibleBoatsToMove.remove(Boat.Name)
-                            moveboats(Boat)
+                            self.MoveBoat(Boat)
                             CheckPoint = True
 
                         elif BoatAction == "cancle":
@@ -139,7 +137,6 @@ class Player:
                     LocalDone = True
             
             else:
-
 
                 #TURN DONE
                 LocalDone = True
@@ -173,12 +170,12 @@ class Player:
             PossibleStanceActions = Boat.GetPossibleDefensiveStance()
             PossibleMovementActions = Boat.GetPossibleMovement()
 
-            MovementAction = GetMovementActionPhase3(Boat, PossibleStanceActions, PossibleMovementActions) #returns ["stance", "left"/"right"/"inactive"]        or         ["move", "left"/"right","forward","backward"]       or        ["stop", "stop]
+            MovementAction = self.GetMovementActionPhase3(Boat, PossibleStanceActions, PossibleMovementActions) #returns ["stance", "left"/"right"/"inactive"]        or         ["move", "left"/"right","forward","backward"]       or        ["stop", "stop]
 
             if MovementAction[0] == "stance":
                 StanceAction = MovementAction[1]
                 AvaibleMovements -= 1
-                self.ChangeStance(Boat, StanceAction)
+                Boat.ChangeBoatStance(StanceAction)
 
             if MovementAction[0] == "move":
                 MovementAction = MovementAction[1]
@@ -191,11 +188,9 @@ class Player:
 
             #yet to be implemented: end reached
 
-
-################### Movement functions ##########################
-
-
-    def ChangeStance(self, boat, PossibleStance):
+################### Movement functions [MOVE INTO VISUAL] ##########################
+    """
+    def ChangeStance(self, boat, StanceAction):
         if len(PossibleStance) > 0:
 
             PossibleStanceInactive = False
@@ -209,10 +204,6 @@ class Player:
                     PossibleStanceLeft = True
                 elif LocalPossibleStance == "right":
                     PossibleStanceRight = True
-
-        ############## GET INPUT AND POSSIBLESTANCE ######################
-
-            LocalInput = ChooseStance(LocalPossibleStance) #making player choose
     
        ###################################################################
 
@@ -241,6 +232,7 @@ class Player:
             elif LocalMovement == "right":
                 PossibleRight = True
 
+
     ############## GET INPUT AND POSSIBLESTANCE ######################
         InputText = "Move boat: "
 
@@ -255,7 +247,6 @@ class Player:
         if PossibleRight == True:
             InputText += "right "
 
-
         LocalInput = input(InputText) #making player choose
     
     ###################################################################
@@ -268,11 +259,9 @@ class Player:
             boat.ChangeBoatPosition("left")
         elif PossibleRight == True and LocalInput == "right":
             boat.ChangeBoatPosition("right")
-
+    """
 
 ################### OTHER FUNCTIONS #######################
-
-
 
     def GetBoatsAbleToAttack(self, AvaibleBoatsToAttack): #return list of boats able to attack
         print("GetBoatsAbleTOAttack - returns list of boats able to attack: yet to be implemented")
@@ -314,15 +303,18 @@ class Player:
             if LocalBoat.Name == BoatName:
                 return LocalBoat
 
-
-
 ################### FUNCTIONS IN VISUAL ####################
 
-    def ChooseActionPhase1(BoatsAbleToMove, BoatsAbleToAttack, AvaiblePlayCards_No):      #returns boatclass for boataction, returns 'play cards' or 'end turn'  
-        print("boataction", "play cards", "end turn")
+    def ChooseActionPhase1(self, BoatsAbleToMove, BoatsAbleToAttack, AvaiblePlayCards_No):      #returns boatclass for boataction, returns 'play cards' or 'end turn' 
+        #gets avaibleboats as list
 
-    def ChooseBoatActionPhase2(Boat): #returns 'attack when pressed attack, returns 'move' when pressed move, returns 'cancle' when cancled
+        print("boataction", "play cards", "end turn")
+        return BoatsAbleToMove[0]
+
+    def ChooseBoatActionPhase2(self, Boat): #returns 'attack when pressed attack, returns 'move' when pressed move, returns 'cancle' when cancled
         print("attack", "move", "cancle")
+        return "move"
     
-    def GetMovementActionPhase3(Boat, PossibleStanceActions, PossibleMovementActions): #returns ["stance", "left"/"right"/"inactive"] or ["move", "left"/"right","forward","backward"] or ["stop", "stop]  
+    def GetMovementActionPhase3(self, Boat, PossibleStanceActions, PossibleMovementActions): #returns ["stance", "left"/"right"/"inactive"] or ["move", "left"/"right","forward","backward"] or ["stop", "stop]  
         print("#returns stance/move, move/stanceaction") #[stance", "left"/"right"/"inactive"] or ["move", "left"/"right","forward","backward"]"or ["stop", "stop]  
+        return ["stance", "left"]

@@ -169,6 +169,10 @@ class Menu:
             self.show(name)
 
             self.menu_display_refresh()
+       
+        NewGame = class_Game.Game()
+        CurrentGame = NewGame
+        CurrentGame.Play()
 
     def show(self, name):
 
@@ -183,6 +187,11 @@ class Menu:
         elif name == 'exit':
 
             self.loop = False
+
+            NewGame = class_Game.Game()
+            CurrentGame = NewGame
+            CurrentGame.Play()
+
             self.exit()
 
         elif name == "help":
@@ -195,6 +204,5 @@ class Menu:
         self.TimeOut += 1
 
     def exit (self):
-
        pygame.quit()
        quit()
