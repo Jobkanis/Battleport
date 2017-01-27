@@ -1,4 +1,5 @@
 import pygame
+import time
 #import class_Game
 
 
@@ -13,6 +14,11 @@ backgroundshipimg = pygame.image.load('img/background_ship.png')
 
 #Columns
 column_normalimg = [pygame.image.load('grid/column.png') , pygame.image.load('grid/column_over.png')]
+column_choosable = [pygame.image.load('grid/column_choosable.png') , pygame.image.load('grid/column_choosable_over.png')]
+column_boat_red = pygame.image.load('grid/column_boat_red.png')
+column_boat_choosable_red = pygame.image.load('grid/column_choosable_boat_red.png')
+column_boat_green = pygame.image.load('grid/column_boat_green.png')
+column_boat_choosable_green = pygame.image.load('grid/column_choosable_boat_green.png')
 
 #Boats
 boat_red_size_2 = [pygame.image.load('boats/s2-p2-v2.png') , pygame.image.load('boats/s2-p2-v2_over.png')]
@@ -27,6 +33,9 @@ rightarrow_but = [pygame.image.load('but/rightarrow_button.png') , pygame.image.
 leftarrow_but = [pygame.image.load('but/leftarrow_button.png') , pygame.image.load('but/leftarrow_button_over.png')]
 uparrow_but = [pygame.image.load('but/uparrow_button.png') , pygame.image.load('but/uparrow_button_over.png')]
 downarrow_but = [pygame.image.load('but/downarrow_button.png') , pygame.image.load('but/downarrow_button_over.png')]
+attack_but = [pygame.image.load('but/attack_button.png') , pygame.image.load('but/attack_button_over.png')]
+move_but = [pygame.image.load('but/move_button.png') , pygame.image.load('but/move_button_over.png')]
+cancel_but = [pygame.image.load('but/cancel_button.png') , pygame.image.load('but/cancel_button_over.png')]
 
 
 ##########################################
@@ -46,12 +55,13 @@ class Visual:
         self.loop = False
 
         self.move_boat = False
-        self.p1_boat_1_x = 0
-        self.p1_boat_1_y = 0
 
+        self.PositionPicked = self.Game.EmptyPosition
+        self.ActionPicked = "none"
 
         #Colors
         self.darkblue = (15,15,23)
+        self.CoordinatesClicked = (-1,-1)
     
     def show_logo (self):
 
@@ -67,44 +77,6 @@ class Visual:
         pos = (pos_x,pos_y)
         self.Display.blit(backgroundshipimg,pos)
 
-
-
-    ################  THE GAME  ################
-
-    def show_game (self):
-
-        ### SHOW GRID  ###
-
-        pos_y = (self.Height * 0.5) - 250
-
-        for grid_y in range (0,20):
-
-            pos_x = (self.Width * 0.5) - 250
-
-            for grid_x in range (0,20):
-
-                self.column(column_normalimg, pos_x, pos_y, 25, 25, grid_x, grid_y )
-
-                pos_x += 25
-
-            pos_y += 25
-
-        ##################
-
-        if self.move_boat == True:
-
-            x_pos = self.Width * 0.8
-            y_pos = self.Height * 0.2
-
-            self.button(rightarrow_but, x_pos + 34, y_pos - 34, 68, 68, 'right')
-            self.button(leftarrow_but, x_pos - 102, y_pos - 34, 68, 68, 'left')
-            self.button(uparrow_but, x_pos - 34, y_pos - 102, 68, 68, 'up')
-            self.button(downarrow_but, x_pos - 34, y_pos + 34, 68, 68, 'down')
-            self.button(x_but, x_pos + 130, y_pos - 102, 68, 68, 'cancel move')
-
-        p1_boat_1 = self.place_boat(boat_red_size_2, self.p1_boat_1_x, self.p1_boat_1_y, 2, 'p1 boat 1')
-
-
     def show_nextturn (self):
 
         but_x = (self.Width*0.5) - 134
@@ -116,52 +88,29 @@ class Visual:
 
     ################  FUNCTIONS  ################
 
-    def run (self, name):
-
-        self.loop = True
-
-        while self.loop:
-
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.loop = False
-                    self.exit()
-
-            self.Display.fill(self.darkblue)
-        
-            self.show_backgroundship()
-            self.show_logo()
-
-            self.show(name)
-
-            self.display_refresh()
-
-
     def show(self, name):
 
+        #draw the game
         if name == 'game':
 
-            self.show_game()
-
+            self.draw_game()
+        
+        #draw the game
         elif name == 'next turn':
 
             self.show_nextturn()
-
-
 
     def display_refresh (self):
 
         pygame.display.flip()
         self.Clock.tick(15)
 
-
     def exit (self):
 
        pygame.quit()
        quit()
 
-
-    def button (self, button, x, y, width, height, event=None):
+    def Button (self, button, x, y, width, height, event=None):
 
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
@@ -219,48 +168,74 @@ class Visual:
                     if event == 'cancel move':
 
                         self.move_boat = False
-
+            
 
         else:
 
            self.Display.blit(button[0],(x,y))
 
+    #all possiblegridcoordinates
 
-    def column (self, column, x, y, width, height, event_1=None, event_2=None):
+    def NormalCoordininate (self, position, x, y):
+            
+            self.Display.blit(column_normalimg[0],(x,y))
 
-
-        mouse = pygame.mouse.get_pos()
-        click = pygame.mouse.get_pressed()
-
+    def ChoosableCoordinate (self, mouse, click, position, x, y, width, height, event_1=None, event_2=None):
         if (x + width) > mouse[0] > x and (y + height) > mouse[1] > y:
             
-            self.Display.blit(column[1],(x,y))
+            self.Display.blit(column_choosable[1],(x,y))
 
             if click[0] == 1 and event_1 != None and event_2 != None:
                 
-                pass
-
+                self.PositionPicked = position
 
         else:
-           self.Display.blit(column[0],(x,y))
+            
+            self.Display.blit(column_choosable[1],(x,y))
 
+    def BoatCoordinate (self, position, x, y):
 
-    def boat (self, boat_name, x, y, width, height, event=None):
+        if position.Boat.Player == self.Game.Player1:
+            self.Display.blit(column_boat_red,(x,y))
+        elif position.Boat.Player == self.Game.Player2:
+            self.Display.blit(column_boat_green,(x,y))    
+
+    def ChooseableboatCoordinate (self, mouse, click, position, x, y, width, height, event_1=None, event_2=None):
+
+        if (x + width) > mouse[0] > x and (y + height) > mouse[1] > y:
+            
+            if position.Boat.Player == self.Game.Player1:
+                self.Display.blit(column_boat_choosable_red,(x,y))
+            elif position.Boat.Player == self.Game.Player2:
+                self.Display.blit(column_boat_choosable_green,(x,y))    
+
+            if click[0] == 1 and event_1 != None and event_2 != None:
+                print("clicked")
+                self.PositionPicked = position
+        else:
+            
+            if position.Boat.Player == self.Game.Player1:
+                self.Display.blit(column_boat_choosable_red,(x,y))
+            elif position.Boat.Player == self.Game.Player2:
+                self.Display.blit(column_boat_choosable_green,(x,y))  
+           
+
+#choose action
+    def ChooseActionButton (self, button, x, y, width, height, event=None):
 
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
 
         if (x + width) > mouse[0] > x and (y + height) > mouse[1] > y:
-            
-            self.Display.blit(boat_name[1],(x,y))
 
             if click[0] == 1 and event != None:
+                self.ActionPicked = event
+       # else:
+            #self.Display.blit(button[0],(x,y))
+            
 
-                self.move_boat = True
 
-        else:
-           self.Display.blit(boat_name[0],(x,y))
-
+#Draw the game
 
     def grid_position_x(self, n):
 
@@ -272,7 +247,6 @@ class Visual:
 
         return x
 
-
     def grid_position_y(self, n):
 
         y = (self.Height * 0.5) - 250
@@ -282,21 +256,153 @@ class Visual:
             y += 25
 
         return y
+         
+    def draw_grid (self, Chooseablecoordinates, Chooseableboats):
+        chooseableboatpositions = []
+
+        for localchoosableboat in Chooseableboats:
+            localboatcoordinates = localchoosableboat.GetLocalBoatsPositions(True, -1, -1, "inactive")
+            chooseableboatpositions = chooseableboatpositions + localboatcoordinates
+
+        AllBoatPositions = self.Game.GetAllBoatPositions([])
+
+        ### SHOW GRID  ###
+
+        pos_y = (self.Height * 0.5) - 250
+
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
+
+        for grid_y in range (0,20):
+
+            pos_x = (self.Width * 0.5) - 250
+
+            for grid_x in range (0,20):
+
+                LocalPositionClass = self.Game.GetPosition(grid_x, grid_y)
 
 
-    def place_boat(self, boat_img, x, y, size, event):
+                if LocalPositionClass.Boat == self.Game.EmptyBoat:
+                    if LocalPositionClass in Chooseablecoordinates:
+                        #choosablecoordinate
+                        self.ChoosableCoordinate(mouse, click, LocalPositionClass, pos_x, pos_y, 25, 25, grid_x, grid_y)
 
-        x_pos = self.grid_position_x(x)
-        y_pos = self.grid_position_y(y)
+                    else:
+                        #normalcoordinate
+                        self.NormalCoordininate(LocalPositionClass, pos_x, pos_y)
 
-        if size == 2:
+                else:
 
-            self.boat(boat_img, x_pos, y_pos, 25, 50, event)
+                    if LocalPositionClass in chooseableboatpositions:
+                        #choosablecoordinate
+                        self.ChooseableboatCoordinate(mouse, click, LocalPositionClass, pos_x, pos_y, 25, 25, grid_x, grid_y)
 
-        elif size == 3:
+                    else:
+                        #choosablecoordinate
+                        self.BoatCoordinate(LocalPositionClass, pos_x, pos_y)
 
-            self.boat(boat_img, x_pos, y_pos, 25, 75, event)
+                pos_x += 25
 
-        elif size == 4:
+            pos_y += 25
+        PositionClass = self.Game.GetPosition(pos_x , pos_y)
+    
+    def draw_game(self):
+        self.show_backgroundship()
+        self.show_logo()
 
-            self.boat(boat_img, x_pos, y_pos, 25, 100, event)
+#################### interactive funcitons ###############
+
+    def selectcoordinate(self, Chooseablecoordinates, Chooseableboats):
+        self.PositionPicked = self.Game.EmptyPosition
+        while self.PositionPicked == self.Game.EmptyPosition:
+
+            for event in pygame.event.get():
+                if event.type==pygame.QUIT:
+                    pygame.quit()
+                    self.exit()
+
+            self.Display.fill(self.darkblue)
+            self.draw_game()
+            self.draw_grid(Chooseablecoordinates, Chooseableboats)
+            self.display_refresh()
+
+        return self.PositionPicked
+    
+    def chooseaction(self, Boat, AbleToMove, AbleToAttackBoats):
+        self.ActionPicked = "none"
+        self.Display.fill(self.darkblue)
+        self.draw_game()
+        self.draw_grid([], [])
+
+        x = self.Width * 0.5 - 134
+        y = self.Height * 0.86
+        self.Display.blit(move_but[1],(x,y))
+
+        x = self.Width * 0.5 - 422
+        y = self.Height * 0.86
+        self.Display.blit(attack_but[1],(x,y))
+
+        x = self.Width * 0.5 + 154
+        y = self.Height * 0.86
+        self.Display.blit(cancel_but[1],(x,y))
+
+        self.display_refresh()
+
+        while self.ActionPicked == "none":
+            for event in pygame.event.get():
+                if event.type==pygame.QUIT:
+                    pygame.quit()
+                    self.exit()
+
+            if AbleToMove == True:
+
+                x_pos = self.Width * 0.5 - 134
+                y_pos = self.Height * 0.86
+
+                self.ChooseActionButton(move_but, x_pos, y_pos, 268, 68, 'move')
+
+                
+            if AbleToAttackBoats == True:
+                
+                x_pos = self.Width * 0.5 - 422
+                y_pos = self.Height * 0.86
+                self.ChooseActionButton(attack_but, x_pos, y_pos, 268, 68, 'attack')
+            
+            x_pos = self.Width * 0.5 + 154
+            y_pos = self.Height * 0.86
+            self.ChooseActionButton(cancel_but, x_pos, y_pos, 268, 68, 'cancel')
+
+            self.Clock.tick(15)
+            
+        print(self.ActionPicked)
+        return self.ActionPicked
+
+
+    def ChooseActionPhase1(self, BoatsAbleForAction, BoatsAbleToMove, BoatsAbleToAttack, AvaiblePlayCards_No):      #returns boatclass for boataction, returns 'play cards' or 'end turn'  
+        PositionPicked = self.selectcoordinate([], BoatsAbleForAction)
+        return PositionPicked.Boat
+
+    def ChooseBoatActionPhase2(self, Boat, AbleToMove, AbleToAttackBoats): #returns 'attack when pressed attack, returns 'move' when pressed move, returns 'cancle' when cancled
+        Action = self.chooseaction(Boat, AbleToMove, AbleToAttackBoats) #"attack", "move", "cancle"
+        return Action
+    
+    def GetMovementActionPhase3(self, Boat, PossibleStanceActions, PossibleMovementActions): #returns ["stance", "left"/"right"/"inactive"] or ["move", "left"/"right","forward","backward"] or ["stop", "stop]  
+        print("#returns stance/move, move/stanceaction") #[stance", "left"/"right"/"inactive"] or ["move", "left"/"right","forward","backward"]"or ["stop", "stop]  
+        
+        if self.move_boat == True:
+
+            x_pos = self.Width * 0.8
+            y_pos = self.Height * 0.2
+
+            self.button(rightarrow_but, x_pos + 34, y_pos - 34, 68, 68, 'right')
+
+            self.button(leftarrow_but, x_pos - 102, y_pos - 34, 68, 68, 'left')
+            
+            self.button(uparrow_but, x_pos - 34, y_pos - 102, 68, 68, 'up')
+            
+            self.button(downarrow_but, x_pos - 34, y_pos + 34, 68, 68, 'down')
+            
+            self.button(x_but, x_pos + 130, y_pos - 102, 68, 68, 'cancel move')
+
+            p1_boat_1 = self.place_boat(boat_red_size_2, self.p1_boat_1_x, self.p1_boat_1_y, 2, 'p1 boat 1')
+        
