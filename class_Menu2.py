@@ -1,4 +1,5 @@
 import pygame
+import class_Game
 #import class_Game
 
 ################  IMAGES  ################
@@ -33,18 +34,20 @@ x_but = [pygame.image.load('but/X_button.png') , pygame.image.load('but/X_button
 
 class Menu:
 
-    def __init__ (self, gameDisplay, clock, width, height):
+    def __init__ (self, game, gameDisplay, clock, width, height):
         self.Display = gameDisplay
         self.Clock = clock
         self.Width = width
         self.Height = height
         self.Size = (width, height)
         self.CurrentHelp = 0
-        self.TimeOut = 0
         self.loop = True
-
+        self.Game = game
+        self.Clicked = 0
+        self.CoolDown = 0
         #colours
         self.darkblue = (15,15,23)
+        self.HelpCheckPoint = False
     
     def show_logo (self):
 
@@ -73,21 +76,38 @@ class Menu:
         print(click)
 
         if (x + width) > mouse[0] > x and (y + height) > mouse[1] > y:
-            
             self.Display.blit(button[1],(x,y))
             if click[0] == 1 and event != None:
-                self.loop = False
-                self.Clock.tick(200)
-                
-                if event == "NextHelp":
-                    self.CurrentHelp = self.CurrentHelp + 1
-                
-                if event != "NextHelp": self.menu_start(event)
+                self.Clicked = self.Clicked + 1
+                if self.Clicked > 0:
+                    self.Clicked = 0
+                    self.loop = False
+                    self.menu_start(event)
 
 
         else:
             self.Display.blit(button[0],(x,y))
 
+    def NextHelpButton(self, button, x, y, width, height, event= None):
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
+        print(click)
+
+        if (x + width) > mouse[0] > x and (y + height) > mouse[1] > y:
+            
+            self.Display.blit(button[1],(x,y))
+
+            if click[0] == 1 and event != None:
+                if self.HelpCheckPoint == True:
+                    self.Clicked = self.Clicked + 1
+
+                    if self.Clicked > 0:
+                        self.Clicked = 0
+                        self.loop = False
+                        GetNextHelpButton(event)
+
+                    self.HelpCheckPoint = False
+                    self.menu_start("help")  
     ################  MENU'S  ################
 
     def show_main (self):
@@ -101,14 +121,16 @@ class Menu:
         but_y += 100
 
         self.CurrentHelp = 0
-        self.button(help_but, but_x, but_y, 268, 68, 'help')
+        self.button(help_but, but_x, but_y, 268, 68, 'ShowHelp1')
         self.TimeOut = 0
         but_y += 100
 
         self.button(exit_but, but_x, but_y, 268, 68, 'exit')
 
     def show_new_game (self):
-
+        self.Game.Play()
+        self.exit()
+        """
         but_x = (self.Width * 0.5) - 134
         but_y = self.Height * 0.3
 
@@ -119,7 +141,8 @@ class Menu:
         but_y += 130
 
         self.button(back_but, but_x, but_y, 268, 68, 'main menu')
-
+        """   #starts game
+   
     def show_help (self):
 
         pos_x = (self.Width * 0.5) - 400
@@ -132,12 +155,15 @@ class Menu:
 
         if self.CurrentHelp - 1 < len(helpimg):
             self.Display.blit(helpimg[self.CurrentHelp - 1],pos)
-            self.button(nextpage_but, but_x, but_y, 268, 68, "NextHelp")
+            self.NextHelpButton(nextpage_but, but_x, but_y, 268, 68, "NextHelp" + str(self.CurrentHelp + 1))
 
         but_y = 20
         but_x = self.Width - 88
 
         self.button(x_but, but_x, but_y, 268, 68, 'main menu')
+
+    def GetNextHelpButton(self, event):
+        pass
 
     def show_nextturn (self):
 
@@ -159,7 +185,6 @@ class Menu:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.loop = False
-                    self.exit()
 
             self.Display.fill(self.darkblue)
         
@@ -170,10 +195,6 @@ class Menu:
 
             self.menu_display_refresh()
        
-        NewGame = class_Game.Game()
-        CurrentGame = NewGame
-        CurrentGame.Play()
-
     def show(self, name):
 
         if name == 'main menu':
@@ -187,11 +208,6 @@ class Menu:
         elif name == 'exit':
 
             self.loop = False
-
-            NewGame = class_Game.Game()
-            CurrentGame = NewGame
-            CurrentGame.Play()
-
             self.exit()
 
         elif name == "help":
@@ -201,8 +217,8 @@ class Menu:
     def menu_display_refresh (self):
         pygame.display.flip()
         self.Clock.tick(15)
-        self.TimeOut += 1
+        self.Cooldown += 1
 
     def exit (self):
-       pygame.quit()
-       quit()
+        pygame.quit()
+        quit()
