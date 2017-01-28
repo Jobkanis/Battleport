@@ -14,6 +14,7 @@ class Player:
         ####################################################
         #For educational purposes
         self.Game = gameclass
+        Visual = self.Game.Visual
         Players = self.Game.Players
         EmptyPlayer= self.Game.EmptyPlayer
         Player1 = self.Game.Player1
@@ -54,6 +55,7 @@ class Player:
 
         while LocalDone == False:
             Actions = ["boataction", "play cards", "end turn"]
+            
 
             ################# GETTING EASY TRUE/FALSE STATEMENTS ###############################
             # ATTACK AND MOVE
@@ -86,6 +88,8 @@ class Player:
             if AvaiblePlayCards_No > 0:
                 AbleToPlayCards = True
 
+
+
             ######## PHASE 1: PICKING A BOAT FOR ACTION OR CHOOSING CARD PLAY #######
             if AbleToBoatAction == True or AbleToMove == True or AbleToPlayCards == True:
 
@@ -95,22 +99,28 @@ class Player:
                 #if AbleToPlayCards == True:
                 #    PossibleActions.append("play cards")
                 
-                ActionPhase1 = self.ChooseActionPhase1(BoatsAbleToMove, BoatsAbleToAttack, AvaiblePlayCards_No) #returns boatclass for boataction, returns 'play cards' or 'end turn'
+                ActionPhase1 = self.Game.Visual.ChooseActionPhase1(BoatsAbleForAction, BoatsAbleToMove, BoatsAbleToAttack, AvaiblePlayCards_No) #returns boatclass for boataction, returns 'play cards' or 'end turn'
+                print("Action 1 chosen")
 
                 if ActionPhase1 in BoatsAbleToAttack or ActionPhase1 in BoatsAbleToMove:  #returned a boat to move
                     ############# PHASE 2: PICKING A BOAT ACTION #########################
                     Boat = ActionPhase1
 
-                    print("boataction")
-                
+                    AbleToMove = False
+                    BoatsPossibleMovement = Boat.GetPossibleMovement()
+                    if len(BoatsPossibleMovement) > 0:
+                        AbleToMove = True
+                    BoatsPossibleStance = Boat.GetPossibleMovement()
+                    if len(BoatsPossibleStance) > 0:
+                        AbleToMove = True
+                    
                     AbleToAttackBoats = True
-                    AbleToMove = True
-
+                    
                     CheckPoint = False
                     while CheckPoint == False:
-                   
-                        BoatAction = self.ChooseBoatActionPhase2(Boat) #returns 'attack when pressed attack, returns 'move' when pressed move, returns 'cancle' when cancled
-                        
+                        print("Choose boat action")
+                        BoatAction = self.Game.Visual.ChooseBoatActionPhase2(Boat, AbleToMove, AbleToAttackBoats) #returns 'attack when pressed attack, returns 'move' when pressed move, returns 'cancel' when cancled
+                        print("action chosen")
                         if BoatAction == "attack":
                             ######################### PHASE 3: ATTACKING A BOAT #####################################
                             AvaibleAttacks_No -= 1
@@ -123,7 +133,7 @@ class Player:
                             self.MoveBoat(Boat)
                             CheckPoint = True
 
-                        elif BoatAction == "cancle":
+                        elif BoatAction == "cancel":
                             #move back to phase 1
                             CheckPoint = True
                     
@@ -137,6 +147,7 @@ class Player:
                     LocalDone = True
             
             else:
+
 
                 #TURN DONE
                 LocalDone = True
@@ -175,12 +186,12 @@ class Player:
             if MovementAction[0] == "stance":
                 StanceAction = MovementAction[1]
                 AvaibleMovements -= 1
-                Boat.ChangeBoatStance(StanceAction)
+                Boat.ChangeBoatStance(MovementAction[1])
 
             if MovementAction[0] == "move":
                 MovementAction = MovementAction[1]
                 AvaibleMovements -= 1
-                self.ChangePositionBoat(Boat, MovementAction)
+                Boat.ChangeBoatPosition(MovementAction[1])
 
             if MovementAction[0] == "stop":
                 print("Stopped moving boat")
@@ -188,9 +199,12 @@ class Player:
 
             #yet to be implemented: end reached
 
-################### Movement functions [MOVE INTO VISUAL] ##########################
-    """
-    def ChangeStance(self, boat, StanceAction):
+
+################### Movement functions ##########################
+
+    def ChangeStance(self, boat, stance):
+        pass
+        """
         if len(PossibleStance) > 0:
 
             PossibleStanceInactive = False
@@ -204,6 +218,10 @@ class Player:
                     PossibleStanceLeft = True
                 elif LocalPossibleStance == "right":
                     PossibleStanceRight = True
+
+        ############## GET INPUT AND POSSIBLESTANCE ######################
+
+            LocalInput = ChooseStance(LocalPossibleStance) #making player choose
     
        ###################################################################
 
@@ -213,8 +231,11 @@ class Player:
                 boat.ChangeBoatStance("left")
             elif PossibleStanceRight == True and LocalInput == "right":
                 boat.ChangeBoatStance("right")
+        """
 
     def ChangePositionBoat(self, boat, possiblemovement):
+        pass
+        """
         print("Move boat: yet to be implemented")
   
         PossibleForward = False
@@ -232,7 +253,6 @@ class Player:
             elif LocalMovement == "right":
                 PossibleRight = True
 
-
     ############## GET INPUT AND POSSIBLESTANCE ######################
         InputText = "Move boat: "
 
@@ -247,6 +267,7 @@ class Player:
         if PossibleRight == True:
             InputText += "right "
 
+
         LocalInput = input(InputText) #making player choose
     
     ###################################################################
@@ -259,13 +280,13 @@ class Player:
             boat.ChangeBoatPosition("left")
         elif PossibleRight == True and LocalInput == "right":
             boat.ChangeBoatPosition("right")
-    """
+        """
 
 ################### OTHER FUNCTIONS #######################
 
     def GetBoatsAbleToAttack(self, AvaibleBoatsToAttack): #return list of boats able to attack
         print("GetBoatsAbleTOAttack - returns list of boats able to attack: yet to be implemented")
-        return self.Boats
+        return []
 
     def GetBoatsAbleToMove(self, AvaibleBoatsToMove): #return list of boats able to move
         Boats = AvaibleBoatsToMove
@@ -304,17 +325,13 @@ class Player:
                 return LocalBoat
 
 ################### FUNCTIONS IN VISUAL ####################
-
-    def ChooseActionPhase1(self, BoatsAbleToMove, BoatsAbleToAttack, AvaiblePlayCards_No):      #returns boatclass for boataction, returns 'play cards' or 'end turn' 
-        #gets avaibleboats as list
-
+    """
+    def ChooseActionPhase1(BoatsAbleToMove, BoatsAbleToAttack, AvaiblePlayCards_No):      #returns boatclass for boataction, returns 'play cards' or 'end turn'  
         print("boataction", "play cards", "end turn")
-        return BoatsAbleToMove[0]
 
-    def ChooseBoatActionPhase2(self, Boat): #returns 'attack when pressed attack, returns 'move' when pressed move, returns 'cancle' when cancled
+    def ChooseBoatActionPhase2(Boat): #returns 'attack when pressed attack, returns 'move' when pressed move, returns 'cancle' when cancled
         print("attack", "move", "cancle")
-        return "move"
-    
+    """    
     def GetMovementActionPhase3(self, Boat, PossibleStanceActions, PossibleMovementActions): #returns ["stance", "left"/"right"/"inactive"] or ["move", "left"/"right","forward","backward"] or ["stop", "stop]  
-        print("#returns stance/move, move/stanceaction") #[stance", "left"/"right"/"inactive"] or ["move", "left"/"right","forward","backward"]"or ["stop", "stop]  
-        return ["stance", "left"]
+        #print("#returns stance/move, move/stanceaction") #[stance", "left"/"right"/"inactive"] or ["move", "left"/"right","forward","backward"]"or ["stop", "stop]  
+        return ["move", "forward"]

@@ -48,11 +48,9 @@ clock = pygame.time.Clock()
 
 ################ START GAME ###################
 
-NewGame = class_Game.Game()
-#CurrentGame = NewGame
+NewGame = class_Game.Game(gameDisplay, clock, width, height)
+NewGame.Play()
 
 
-Visual = class_Visual.Visual(NewGame, gameDisplay, clock, width, height)
-Visual.run('game')
 
 

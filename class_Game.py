@@ -7,9 +7,11 @@ import pygame
 import class_Player
 import class_Boats
 import class_Positions
+import class_Visual
+import class_Menu
 
 class Game:
-    def __init__(self):
+    def __init__(self, gameDisplay, clock, width, height):
         #creating classes
 
         ######### Empty Variables ###########
@@ -22,6 +24,8 @@ class Game:
 
         self.Player1 = NotImplemented
         self.Player2 = NotImplemented
+
+        self.Visual = class_Visual.Visual(self, gameDisplay, clock, width, height)
 
         ########## Empty Classes ##########
         self.EmptyPlayer = class_Player.Player(self, "empty")
@@ -42,9 +46,12 @@ class Game:
 
         self.Player2 = class_Player.Player(self, "player2")
         self.Players.append(self.Player2)
+        
 
+        
         self.Player1.CreateBoats()
         self.Player2.CreateBoats()        
+
 
     def Play(self):
         self.Player_Playing = self.Player2        
