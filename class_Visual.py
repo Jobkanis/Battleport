@@ -54,6 +54,7 @@ class Visual:
         self.Width = width
         self.Height = height
         self.Size = (width, height)
+        self.font = pygame.font.SysFont('Calibri', 20)
 
         self.loop = False
 
@@ -266,6 +267,12 @@ class Visual:
 
             pos_y += 25
         PositionClass = self.Game.GetPosition(pos_x , pos_y)
+        
+        self.MessageBox('Messagebox 1', ((self.Width * 0.5) - 350), 20, 700, 25)
+        self.MessageBox('Messagebox 2', ((self.Width * 0.5) - 250), 60, 500, 25)
+
+        self.MessageBox('Player 1', 10, 170, 300, 200)
+        self.MessageBox('Player 2', 10, 400, 300, 200)
     
     def draw_game(self):
         self.show_backgroundship()
@@ -446,6 +453,18 @@ class Visual:
         action = self.MovementPicked
         return action
 
+    
+    
+    def addRect(self, x, y, width, height):
+        self.rect = pygame.draw.rect(self.Display, self.white, (x, y, width, height), 3)
+
+    def addText(self, text, x, y, width, height):
+        self.Display.blit(self.font.render(text, True, self.white, (width, height)),(x+5,y+5))
+
+    def MessageBox(self, text, x, y, width, height):
+
+        self.addRect(x, y, width, height)
+        self.addText(text, x, y, width, height)
 
 
 
