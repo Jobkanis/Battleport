@@ -82,7 +82,7 @@ class Boat:
                 self.Name = ["Merapi", "Amadea"][LocalBoatName]
                 self.Health = 4
                 self.Size = 4
-                self.MovementRange = 1
+                self.MovementRange = 5#1
                 self.X_AttackRange = 4
                 self.Y_AttackRange = 4
                 self.DefensiveRange = 5          
@@ -249,6 +249,79 @@ class Boat:
 
 ############## POSITION CHECKS ############
 
+    def GetPositionsInreachToAttack(self):
+        ownpositions = self.GetLocalBoatsPositions(True, -1,-1,"inactive")
+
+        attackpositions = []
+
+        if self.DefensiveStance == "inactive":
+            for pos in ownpositions:
+                y = pos.Y
+                x = pos.X
+
+                #yrange
+                for Range in range(1, self.Y_AttackRange + 1):
+                    if self.Player == self.Game.Player1:
+                        localpos1 = self.Game.GetPosition(x, y - Range)
+                        localpos2 = self.Game.GetPosition(x, y + Range)
+
+                    elif self.Player == self.Game.Player2:
+                        localpos1 = self.Game.GetPosition(x, y + Range)
+                        localpos2 = self.Game.GetPosition(x, y - Range) #somehow adds all coordinates where from boat (size - 1 + range)
+
+                    if localpos1 != self.Game.EmptyPosition and localpos1.Boat != self:
+                        attackpositions.append(localpos1)
+                    if localpos2 != self.Game.EmptyPosition and localpos1.Boat != self:
+                        attackpositions.append(localpos2)
+
+                #xrange
+                for i in range(1, self.X_AttackRange + 1):
+                    localpos3 = self.Game.GetPosition(x - i, y)
+                    localpos4 = self.Game.GetPosition(x + i, y)
+                    
+                    if localpos3 != self.Game.EmptyPosition and localpos1.Boat != self:
+                        attackpositions.append(localpos3)
+                    if localpos4 != self.Game.EmptyPosition and localpos1.Boat != self:
+                        attackpositions.append(localpos4)
+
+        else:
+
+            for pos in ownpositions:
+                y = pos.Y
+                x = pos.X
+                for i in range(1, self.DefensiveRange + 1):
+
+                    localpos1 = self.Game.GetPosition(x, y+i)
+                    localpos2 = self.Game.GetPosition(x, y-i)
+
+                    if localpos1 != self.Game.EmptyPosition and localpos1.Boat != self:
+                        attackpositions.append(localpos1)                    
+                    if localpos2 != self.Game.EmptyPosition and localpos1.Boat != self:
+                        attackpositions.append(localpos2)
+
+        return(attackpositions)
+
+    def GetBoatsInReachToAttack(self):
+
+        PositionsInReach = self.GetPositionsInreachToAttack()
+
+        if self.Player == self.Game.Player2:
+            opponent = self.Game.Player1
+        elif self.Player == self.Game.Player1:
+            opponent = self.Game.Player2
+
+        BoatPositionsOfOpponent = opponent.GetPlayerBoatPositions([])
+
+        BoatsInReach = []
+
+        for pos in PositionsInReach:
+            if pos in BoatPositionsOfOpponent:
+                if pos.Boat not in BoatsInReach:
+                    BoatsInReach.append(pos.Boat)     
+
+        return BoatsInReach
+
+#########################################################################
     def CheckIfPositionTaken(self, x, y, defensivestance):
 
 

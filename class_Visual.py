@@ -290,11 +290,11 @@ class Visual:
 
         return self.PositionPicked
     
-    def chooseaction(self, Boat, AbleToMove, AbleToAttackBoats):
+    def chooseaction(self, Boat, AbleToMove, AbleToAttackBoats, PositionsToAttack):
         self.ActionPicked = "none"
         self.Display.fill(self.darkblue)
         self.draw_game()
-        self.draw_grid([], [])
+        self.draw_grid(PositionsToAttack, [])
         if AbleToMove == True:
             x = self.Width * 0.5 - 134
             y = self.Height * 0.86
@@ -345,11 +345,12 @@ class Visual:
         PositionPicked = self.selectcoordinate([], BoatsAbleForAction)
         return PositionPicked.Boat
 
-    def ChooseBoatActionPhase2(self, Boat, AbleToMove, AbleToAttackBoats): #returns 'attack when pressed attack, returns 'move' when pressed move, returns 'cancle' when cancled
-        Action = self.chooseaction(Boat, AbleToMove, AbleToAttackBoats) #"attack", "move", "cancle"
+    def ChooseBoatActionPhase2(self, Boat, AbleToMove, AbleToAttackBoats, PositionsToAttack): #returns 'attack when pressed attack, returns 'move' when pressed move, returns 'cancle' when cancled
+        Action = self.chooseaction(Boat, AbleToMove, AbleToAttackBoats, PositionsToAttack) #"attack", "move", "cancle"
         return Action
     
-    def GetMovementActionPhase3(self, Boat, PossibleStanceActions, PossibleMovementActions): #returns ["stance", "left"/"right"/"inactive"] or ["move", "left"/"right","forward","backward"] or ["stop", "stop]  
+    def GetMovementActionPhase3(self, Boat, PossibleStanceActions, PossibleMovementActions, PositionsToAttack): #returns ["stance", "left"/"right"/"inactive"] or ["move", "left"/"right","forward","backward"] or ["stop", "stop]  
+        print(PossibleStanceActions)
         print("get movementactionphase3")
         selectedboatpositions = Boat.GetLocalBoatsPositions(True, -1,-1,"inactive")
 
@@ -379,10 +380,10 @@ class Visual:
                 StanceInactive = True
        
         self.MovementPicked = "none"
-
+        
         self.Display.fill(self.darkblue)
         self.draw_game()
-        self.draw_grid([], [])
+        self.draw_grid(PositionsToAttack, [])
 
         while self.MovementPicked == "none":
             
@@ -427,3 +428,9 @@ class Visual:
 
         action = self.MovementPicked
         return action
+
+
+
+
+
+####

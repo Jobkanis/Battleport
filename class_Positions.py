@@ -31,6 +31,7 @@ class Position:
         self.X = x 
         self.Y = y 
         self.Boat = EmptyBoat
+        self.ShowHeart = False
 
     def __str__(self):
         return " (" + str(self.X) + " , " + str(self.Y) + ")"

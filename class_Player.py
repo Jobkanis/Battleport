@@ -54,6 +54,7 @@ class Player:
         LocalDone = False
 
         while LocalDone == False:
+
             Actions = ["boataction", "play cards", "end turn"]
             
 
@@ -81,7 +82,8 @@ class Player:
 
             AbleToBoatAction = False
             if len(BoatsAbleForAction) >0 :
-                AbleToBoatAction = True       
+                AbleToBoatAction = True    
+   
             # PLAY CARDS
 
             #AbleToPlayCards = False
@@ -92,7 +94,7 @@ class Player:
 
 
             ######## PHASE 1: PICKING A BOAT FOR ACTION OR CHOOSING CARD PLAY #######
-            if AbleToBoatAction == True or AbleToMove == True: #or AbleToPlayCards == True:
+            if AbleToBoatAction == True: #or AbleToPlayCards == True:
 
                 #PossibleActions = ["end turn"]
                 #if AbleToBoatActoin == True:
@@ -107,25 +109,29 @@ class Player:
                     ############# PHASE 2: PICKING A BOAT ACTION #########################
                     LocalBoat = ActionPhase1
 
+                    PositionsToAttack = LocalBoat.GetPositionsInreachToAttack()
+
                     AbleToMove = False
                     if LocalBoat.Name in AvaibleBoatsToMove:
                         BoatsPossibleMovement = LocalBoat.GetPossibleMovement()
                         if len(BoatsPossibleMovement) > 0:
                             AbleToMove = True
-                        BoatsPossibleStance = LocalBoat.GetPossibleMovement()
+                        BoatsPossibleStance = LocalBoat.GetPossibleDefensiveStance()
                         if len(BoatsPossibleStance) > 0:
                             AbleToMove = True
                     
                     AbleToAttackBoats = False
                     if AvaibleAttacks_No > 0:
                         if LocalBoat.Name in AvaibleBoatsToAttack:
-                            AbleToAttackBoats = True
+                            if len(LocalBoat.GetBoatsInReachToAttack()) > 0:
+                                AbleToAttackBoats = True
                     
                     CheckPoint = False
                     while CheckPoint == False:
                         print("Choose boat action")
 
-                        BoatAction = self.Game.Visual.ChooseBoatActionPhase2(LocalBoat, AbleToMove, AbleToAttackBoats) #returns 'attack when pressed attack, returns 'move' when pressed move, returns 'cancel' when cancled
+                        BoatAction = self.Game.Visual.ChooseBoatActionPhase2(LocalBoat, AbleToMove, AbleToAttackBoats, PositionsToAttack) #returns 'attack when pressed attack, returns 'move' when pressed move, returns 'cancel' when cancled
+
                         print("action chosen")
                         if BoatAction == "attack":
                             ######################### PHASE 3: ATTACKING A BOAT #####################################
@@ -151,11 +157,8 @@ class Player:
 
                 elif ActionPhase1 == "end turn":        #returned "end turn"
                     # END TURN
-                    LocalDone = True
-            
+                    LocalDone = True       
             else:
-
-
                 #TURN DONE
                 LocalDone = True
 
@@ -168,9 +171,9 @@ class Player:
 
 ##################  ACTIONS (Phase 3) #########################
 
-    def PlayCards(self):
-        print("Choose a card to play: yet to be implemented")
-        print("Play the card: yet to be implemented")
+    #def PlayCards(self):
+    #    print("Choose a card to play: yet to be implemented")
+    #    print("Play the card: yet to be implemented")
 
     def Attack(self):
         print("Check if ship in range: yet to be implemented")
@@ -178,7 +181,6 @@ class Player:
         print("Attackboat: yet to be implemented")
 
     def MoveBoat(self, Boat):
-
         #CHOOSE MOVE ACTION TO DO
         self.Game.Visual.drawscreen()
         time.sleep(0.5)
@@ -192,8 +194,10 @@ class Player:
 
             PossibleStanceActions = Boat.GetPossibleDefensiveStance()
             PossibleMovementActions = Boat.GetPossibleMovement()
+            PositionsToAttack = Boat.GetPositionsInreachToAttack()
+            print(PossibleStanceActions)
 
-            MovementAction = self.Game.Visual.GetMovementActionPhase3(Boat, PossibleStanceActions, PossibleMovementActions)  #returns ["stance", "left"/"right"/"inactive"]        or         ["move", "left"/"right","forward","backward"]       or        ["stop", "stop]
+            MovementAction = self.Game.Visual.GetMovementActionPhase3(Boat, PossibleStanceActions, PossibleMovementActions, PositionsToAttack)  #returns ["stance", "left"/"right"/"inactive"]        or         ["move", "left"/"right","forward","backward"]       or        ["stop", "stop]
 
             if MovementAction[0] == "stance":
                 Action = MovementAction[1]
@@ -215,94 +219,18 @@ class Player:
 
             #yet to be implemented: end reached
 
-
-################### Movement functions ##########################
-
-    def ChangeStance(self, boat, stance):
-        pass
-        """
-        if len(PossibleStance) > 0:
-
-            PossibleStanceInactive = False
-            PossibleStanceLeft = False
-            PossibleStanceRight = False
-
-            for LocalPossibleStance in PossibleStance:
-                if LocalPossibleStance == "inactive":
-                    PossibleStanceInactive = True
-                elif LocalPossibleStance == "left":
-                    PossibleStanceLeft = True
-                elif LocalPossibleStance == "right":
-                    PossibleStanceRight = True
-
-        ############## GET INPUT AND POSSIBLESTANCE ######################
-
-            LocalInput = ChooseStance(LocalPossibleStance) #making player choose
-    
-       ###################################################################
-
-            if PossibleStanceInactive == True and LocalInput == "inactive":
-                boat.ChangeBoatStance("inactive")
-            elif PossibleStanceLeft == True and LocalInput == "left":
-                boat.ChangeBoatStance("left")
-            elif PossibleStanceRight == True and LocalInput == "right":
-                boat.ChangeBoatStance("right")
-        """
-
-    def ChangePositionBoat(self, boat, possiblemovement):
-        pass
-        """
-        print("Move boat: yet to be implemented")
-  
-        PossibleForward = False
-        PossibleBackward = False
-        PossileLeft = False
-        PossibleRight = False
-
-        for LocalMovement in possiblemovement:
-            if LocalMovement == "forward":
-                PossibleForward = True
-            elif LocalMovement == "backward":
-                PossibleBackward = True
-            elif LocalMovement == "left":
-                PossileLeft = True
-            elif LocalMovement == "right":
-                PossibleRight = True
-
-    ############## GET INPUT AND POSSIBLESTANCE ######################
-        InputText = "Move boat: "
-
-        if PossibleForward == True:
-            InputText += "forward "
-
-        if PossibleBackward == True:
-            InputText += "backward "
-
-        if PossileLeft == True:
-            InputText += "left "
-        if PossibleRight == True:
-            InputText += "right "
-
-
-        LocalInput = input(InputText) #making player choose
-    
-    ###################################################################
-
-        if PossibleForward == True and LocalInput == "forward":
-            boat.ChangeBoatPosition("forward")
-        elif PossibleBackward == True and LocalInput == "backward":
-            boat.ChangeBoatPosition("backward")
-        elif PossileLeft == True and LocalInput == "left":
-            boat.ChangeBoatPosition("left")
-        elif PossibleRight == True and LocalInput == "right":
-            boat.ChangeBoatPosition("right")
-        """
-
 ################### OTHER FUNCTIONS #######################
 
     def GetBoatsAbleToAttack(self, AvaibleBoatsToAttack): #return list of boats able to attack
-        print("GetBoatsAbleTOAttack - returns list of boats able to attack: yet to be implemented")
-        return self.Boats
+        BoatsAbleToAttack = []
+        for boatname in AvaibleBoatsToAttack:
+            boatclass = self.GetBoatFromName(boatname)
+
+            LocalBoatsToAttack = boatclass.GetBoatsInReachToAttack()
+            if len(LocalBoatsToAttack) > 0:
+                boatclass.append(boat)
+
+        return BoatsAbleToAttack
 
     def GetBoatsAbleToMove(self, AvaibleBoatsToMove): #return list of boats able to move
         Boats = AvaibleBoatsToMove
@@ -340,16 +268,3 @@ class Player:
         for LocalBoat in Boats:
             if LocalBoat.Name == BoatName:
                 return LocalBoat
-
-################### FUNCTIONS IN VISUAL ####################
-    """
-    def ChooseActionPhase1(BoatsAbleToMove, BoatsAbleToAttack, AvaiblePlayCards_No):      #returns boatclass for boataction, returns 'play cards' or 'end turn'  
-        print("boataction", "play cards", "end turn")
-
-    def ChooseBoatActionPhase2(Boat): #returns 'attack when pressed attack, returns 'move' when pressed move, returns 'cancle' when cancled
-        print("attack", "move", "cancle")
-      
-    def GetMovementActionPhase3(self, Boat, PossibleStanceActions, PossibleMovementActions): #returns ["stance", "left"/"right"/"inactive"] or ["move", "left"/"right","forward","backward"] or ["stop", "stop]  
-        #print("#returns stance/move, move/stanceaction") #[stance", "left"/"right"/"inactive"] or ["move", "left"/"right","forward","backward"]"or ["stop", "stop]  
-        return ["stance", "left"]
-    """ 
