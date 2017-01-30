@@ -29,6 +29,7 @@ class Boat:
         self.Kind = kind
         self.Name = "empty"
         self.Health = -1
+        self.MaxHealth = -1
         self.Size = 1
         self.MovementRange = 0
         self.X_AttackRange = 0
@@ -57,6 +58,7 @@ class Boat:
             if kind == "size2":
                 self.Name = ["Furgo Saltire", "Santa Bettina"][LocalBoatName]
                 self.Health = 2
+                self.MaxHealth = 2
                 self.Size = 2
                 self.MovementRange = 3
                 self.X_AttackRange = 2
@@ -65,6 +67,7 @@ class Boat:
             if kind == "size31":
                 self.Name = ["Silver whisper", "Sea Spirit"][LocalBoatName]
                 self.Health = 3
+                self.MaxHealth = 3
                 self.Size = 3
                 self.MovementRange = 2
                 self.X_AttackRange = 3
@@ -73,6 +76,7 @@ class Boat:
             if kind == "size32":
                 self.Name = ["Windsurf", "Intensity"][LocalBoatName]
                 self.Health = 3
+                self.MaxHealth = 3
                 self.Size = 3
                 self.MovementRange = 2
                 self.X_AttackRange = 3
@@ -81,6 +85,7 @@ class Boat:
             if kind == "size4":
                 self.Name = ["Merapi", "Amadea"][LocalBoatName]
                 self.Health = 4
+                self.MaxHealth = 4
                 self.Size = 4
                 self.MovementRange = 50#1
                 self.X_AttackRange = 4

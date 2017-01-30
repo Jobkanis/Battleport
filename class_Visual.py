@@ -63,11 +63,12 @@ class Visual:
         self.PositionPicked = self.Game.EmptyPosition
         self.ActionPicked = "none"
         self.MovementPicked = "none"
+        self.CoordinatesClicked = (-1,-1)
 
         #Colors
         self.darkblue = (15,15,23)
-        self.CoordinatesClicked = (-1,-1)
-    
+        self.white = (255, 255, 255)
+           
     def show_logo (self):
 
         pos_x = 15
@@ -114,6 +115,7 @@ class Visual:
 
        pygame.quit()
        quit()
+#############################################################
 
     def Movementbutton (self, mouse, click, button, x, y, width, height, event=None): 
         mouse = pygame.mouse.get_pos()
@@ -124,6 +126,46 @@ class Visual:
                 self.MovementPicked = event
             #self.Display.blit(button[1],(x,y))           
 
+    def addRect(self, x, y, width, height, outline):
+        self.rect = pygame.draw.rect(self.Display, self.white, (x, y, width, height), outline)
+
+    def addText(self, text, x, y, width, height):
+        self.Display.blit(self.font.render(text, True, self.white, (width, height)),(x+5,y+5))
+
+    def MessageBox(self, text, x, y, width, height):
+        self.addRect(x, y, width, height, 1)
+        self.addText(text, x, y, width, height)
+
+    def Playerstats(self, x, y, width, height, line1, line2, line3, line4, line5):
+        self.addRect(x, y, width, height, 2)
+        self.addText(line1, x, y + 5, width, height)
+        self.addText(line2, x, y + 35, width, height)
+        self.addText(line3, x, y + 60, width, height)
+        self.addText(line4, x, y + 85, width, height)
+        self.addText(line5, x, y + 110, width, height)
+
+    def Getstringfromboat(self,Boat):
+        string = str(Boat.Name) + " | Size: " + str(Boat.Size) + " | Health = " + str(Boat.Health) + "/" + str(Boat.MaxHealth)
+        return string
+
+    def GetPlayerStatsString(self, Player):
+        line1 = " "; line2 = " "; line3 = " "; line4 = " "; line5 = " "
+        boats = Player.Boats
+        line1 = str(Player.Name) + "s stats:"
+        if len(boats) > 0:
+            localboat = boats[0]
+            line2 = self.Getstringfromboat(boats[0])
+        if len(Player.Boats) > 1:
+            localboat = boats[1]
+            line3 = self.Getstringfromboat(boats[1])
+        if len(Player.Boats) > 2:
+            localboat = boats[2]
+            line4 = self.Getstringfromboat(boats[2])
+        if len(Player.Boats) > 3:
+            localboat = boats[3]
+            line5 = self.Getstringfromboat(boats[3])
+        return [line1, line2, line3, line4, line5]
+            
     #all possiblegridcoordinates
 
     def NormalCoordininate (self, position, x, y):
@@ -167,6 +209,8 @@ class Visual:
                 self.Display.blit(column_boat_choosable_red,(x,y))
             elif position.Boat.Player == self.Game.Player2:
                 self.Display.blit(column_boat_choosable_green,(x,y))  
+
+####
 
     def EndTurnButton (self, button, x, y, width, height, event=None):
         
@@ -267,16 +311,21 @@ class Visual:
 
             pos_y += 25
         PositionClass = self.Game.GetPosition(pos_x , pos_y)
-        
-        self.MessageBox('Messagebox 1', ((self.Width * 0.5) - 350), 20, 700, 25)
-        self.MessageBox('Messagebox 2', ((self.Width * 0.5) - 250), 60, 500, 25)
-
-        self.MessageBox('Player 1', 10, 170, 300, 200)
-        self.MessageBox('Player 2', 10, 400, 300, 200)
     
-    def draw_game(self):
+    def draw_game(self, MessageBox1Tekst, MessageBox2Tekst):
         self.show_backgroundship()
         self.show_logo()
+
+        self.MessageBox(MessageBox1Tekst, ((self.Width * 0.5) - 350), self.Height * 0.5 - 325, 700, 25)
+        self.MessageBox(MessageBox2Tekst, ((self.Width * 0.5) - 250), self.Height * 0.5 - 275, 500, 25)
+
+        
+        Player1Text = self.GetPlayerStatsString(self.Game.Player1)
+        print(Player1Text)
+        self.Playerstats(10, 170, 350, 200, Player1Text[0], Player1Text[1], Player1Text[2], Player1Text[3], Player1Text[4])
+        
+        Player2Text = self.GetPlayerStatsString(self.Game.Player2)
+        self.Playerstats(10, 400, 350, 200, Player2Text[0], Player2Text[1], Player2Text[2], Player2Text[3], Player2Text[4])
 
 #################### interactive funcitons ###############
     def drawscreen(self):
@@ -286,7 +335,7 @@ class Visual:
                 self.exit()
 
         self.Display.fill(self.darkblue)
-        self.draw_game()
+        self.draw_game("","")
         self.draw_grid([], [])
         self.display_refresh()
 
@@ -300,7 +349,7 @@ class Visual:
                     self.exit()
 
             self.Display.fill(self.darkblue)
-            self.draw_game()
+            self.draw_game("messagebox", "messagebox")
             self.draw_grid(Chooseablecoordinates, Chooseableboats)
 
             x_pos = self.Width * 0.5
@@ -318,7 +367,7 @@ class Visual:
     def chooseaction(self, Boat, AbleToMove, AbleToAttackBoats, PositionsToAttack):
         self.ActionPicked = "none"
         self.Display.fill(self.darkblue)
-        self.draw_game()
+        self.draw_game("","")
         self.draw_grid(PositionsToAttack, [])
         if AbleToMove == True:
             x = self.Width * 0.5 - 134
@@ -406,7 +455,7 @@ class Visual:
         self.MovementPicked = "none"
         
         self.Display.fill(self.darkblue)
-        self.draw_game()
+        self.draw_game("","")
         self.draw_grid(PositionsToAttack, [])
 
         while self.MovementPicked == "none":
@@ -452,20 +501,6 @@ class Visual:
 
         action = self.MovementPicked
         return action
-
-    
-    
-    def addRect(self, x, y, width, height):
-        self.rect = pygame.draw.rect(self.Display, self.white, (x, y, width, height), 3)
-
-    def addText(self, text, x, y, width, height):
-        self.Display.blit(self.font.render(text, True, self.white, (width, height)),(x+5,y+5))
-
-    def MessageBox(self, text, x, y, width, height):
-
-        self.addRect(x, y, width, height)
-        self.addText(text, x, y, width, height)
-
 
 
 
