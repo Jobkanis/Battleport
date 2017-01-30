@@ -48,7 +48,7 @@ class Player:
 
         #Taking a card
         if len(self.Cards) < 7:
-            print("Takecard: yet to be implemented")
+            ("Takecard: yet to be implemented")
 
         #The actual possible moves the player can do (loop)
         LocalDone = False
@@ -101,8 +101,27 @@ class Player:
                 #    PossibleActions.append("boataction")
                 #if AbleToPlayCards == True:
                 #    PossibleActions.append("play cards")
+                if AbleToMove == True and AbleToAttack == True:
+                    MessageBox1Tekst = "Choose a boat to move or attack"
+                elif AbleToMove == True and AbleToAttack == False:
+                    MessageBox1Tekst = "Choose a boat to move"
+                elif AbleToMove == False and AbleToAttack == True:
+                    MessageBox1Tekst = "Choose a boat to attack"
+
+                MessageBox2Tekst = "Actions left: " + str(len(BoatsAbleToMove)) + " movement actions | " + str(AvaibleAttacks_No) + " potential attacks"
                 
-                ActionPhase1 = self.Game.Visual.ChooseActionPhase1(BoatsAbleForAction, BoatsAbleToMove, BoatsAbleToAttack) #AvaiblePlayCards_No) #returns boatclass for boataction, returns 'play cards' or 'end turn'
+
+                length = len(MessageBox1Tekst)
+                spacenum = 120 - length
+                halfspacenum = int(spacenum / 2)
+                MessageBox1Tekst = " " * halfspacenum + MessageBox1Tekst
+
+                length = len(MessageBox2Tekst)
+                spacenum = 66 - length
+                halfspacenum = int(spacenum / 2)
+                MessageBox2Tekst = " " * halfspacenum + MessageBox2Tekst
+
+                ActionPhase1 = self.Game.Visual.ChooseActionPhase1(BoatsAbleForAction, BoatsAbleToMove, BoatsAbleToAttack, MessageBox1Tekst, MessageBox2Tekst) #AvaiblePlayCards_No) #returns boatclass for boataction, returns 'play cards' or 'end turn'
                 print("Action 1 chosen")
 
                 if ActionPhase1 in BoatsAbleToAttack or ActionPhase1 in BoatsAbleToMove:  #returned a boat to move
@@ -130,8 +149,13 @@ class Player:
                     CheckPoint = False
                     while CheckPoint == False:
                         print("Choose boat action")
-
-                        BoatAction = self.Game.Visual.ChooseBoatActionPhase2(LocalBoat, AbleToMove, AbleToAttackBoats, PositionsToAttack) #returns 'attack when pressed attack, returns 'move' when pressed move, returns 'cancel' when cancled
+                        MessageBox1Tekst = " " * 20 + "Choose an action (" + "Actions left: " + str(len(BoatsAbleToMove)) + " movements | " + str(AvaibleAttacks_No) + " attacks)"
+                        MessageBox2Tekst = "Selected: " + LocalBoat.Name + "  | health: " + str(LocalBoat.Health) + "/" + str(LocalBoat.MaxHealth) + " | movementrange: " + str(LocalBoat.MovementRange)
+                        length = len(MessageBox2Tekst)
+                        spacenum = 64 - length
+                        halfspacenum = int(spacenum / 2)
+                        MessageBox2Tekst = " " * halfspacenum + MessageBox2Tekst
+                        BoatAction = self.Game.Visual.ChooseBoatActionPhase2(LocalBoat, AbleToMove, AbleToAttackBoats, PositionsToAttack, MessageBox1Tekst, MessageBox2Tekst) #returns 'attack when pressed attack, returns 'move' when pressed move, returns 'cancel' when cancled
 
                         print("action chosen")
                         if BoatAction == "attack":
@@ -180,8 +204,13 @@ class Player:
     def Attack(self, Boat):
         BoatPositionsAbleToAttack = Boat.GetPositionsInreachToAttack()
         BoatsAbleToAttack = Boat.GetBoatsInReachToAttack()
-
-        BoatToAttack = self.Game.Visual.GetAttackActionPhase3(Boat, BoatPositionsAbleToAttack, BoatsAbleToAttack)
+        MessageBox1Tekst = " " * 49 + "Choose a boat to attack"
+        MessageBox2Tekst = "Selected: " + Boat.Name + "  | health: " + str(Boat.Health) + "/" + str(Boat.MaxHealth) + " | movementrange: " + str(Boat.MovementRange)
+        length = len(MessageBox2Tekst)
+        spacenum = 64 - length
+        halfspacenum = int(spacenum / 2)
+        MessageBox2Tekst = " " * halfspacenum + MessageBox2Tekst
+        BoatToAttack = self.Game.Visual.GetAttackActionPhase3(Boat, BoatPositionsAbleToAttack, BoatsAbleToAttack, MessageBox1Tekst, MessageBox2Tekst)
         BoatToAttack.DealDamage(1)
 
     def MoveBoat(self, Boat):
@@ -192,16 +221,20 @@ class Player:
         LocalDone = False
 
         while AvaibleMovements > 0 and LocalDone == False:
-            print(AvaibleMovements)
             Action = ""
             MovementAction = ""
 
             PossibleStanceActions = Boat.GetPossibleDefensiveStance()
             PossibleMovementActions = Boat.GetPossibleMovement()
             PositionsToAttack = Boat.GetPositionsInreachToAttack()
-            print(PossibleStanceActions)
-
-            MovementAction = self.Game.Visual.GetMovementActionPhase3(Boat, PossibleStanceActions, PossibleMovementActions, PositionsToAttack)  #returns ["stance", "left"/"right"/"inactive"]        or         ["move", "left"/"right","forward","backward"]       or        ["stop", "stop]
+            MessageBox1Tekst = " " * 38 + "Move your boat ("+ str(AvaibleMovements) + "/" + str(Boat.MovementRange) + " movements left)" #55
+            MessageBox2Tekst = "Selected: " + Boat.Name + "  | health: " + str(Boat.Health) + "/" + str(Boat.MaxHealth) + " | movementrange: " + str(Boat.MovementRange)
+            length = len(MessageBox2Tekst)
+            spacenum = 64 - length
+            halfspacenum = int(spacenum / 2)
+            MessageBox2Tekst = " " * halfspacenum + MessageBox2Tekst
+            #MessageBox2Tekst = " " * 24 + "You have " + str(AvaibleMovements) + "/" + str(Boat.MovementRange) + " movements left"
+            MovementAction = self.Game.Visual.GetMovementActionPhase3(Boat, PossibleStanceActions, PossibleMovementActions, PositionsToAttack, MessageBox1Tekst, MessageBox2Tekst)  #returns ["stance", "left"/"right"/"inactive"]        or         ["move", "left"/"right","forward","backward"]       or        ["stop", "stop]
 
             if MovementAction[0] == "stance":
                 Action = MovementAction[1]

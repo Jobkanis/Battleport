@@ -317,11 +317,11 @@ class Visual:
         self.show_logo()
 
         self.MessageBox(MessageBox1Tekst, ((self.Width * 0.5) - 350), self.Height * 0.5 - 325, 700, 25)
+
         self.MessageBox(MessageBox2Tekst, ((self.Width * 0.5) - 250), self.Height * 0.5 - 275, 500, 25)
 
         
         Player1Text = self.GetPlayerStatsString(self.Game.Player1)
-        print(Player1Text)
         self.Playerstats(10, 170, 350, 200, Player1Text[0], Player1Text[1], Player1Text[2], Player1Text[3], Player1Text[4])
         
         Player2Text = self.GetPlayerStatsString(self.Game.Player2)
@@ -339,7 +339,7 @@ class Visual:
         self.draw_grid([], [])
         self.display_refresh()
 
-    def selectcoordinate(self, Chooseablecoordinates, Chooseableboats, ShowEndTurnDisplay):
+    def selectcoordinate(self, Chooseablecoordinates, Chooseableboats, ShowEndTurnDisplay, MessageBox1Tekst, MessageBox2Tekst):
         self.PositionPicked = self.Game.EmptyPosition
         while self.PositionPicked == self.Game.EmptyPosition:
 
@@ -349,7 +349,7 @@ class Visual:
                     self.exit()
 
             self.Display.fill(self.darkblue)
-            self.draw_game("messagebox", "messagebox")
+            self.draw_game(MessageBox1Tekst, MessageBox2Tekst)
             self.draw_grid(Chooseablecoordinates, Chooseableboats)
 
             x_pos = self.Width * 0.5
@@ -364,10 +364,10 @@ class Visual:
 
         return self.PositionPicked
     
-    def chooseaction(self, Boat, AbleToMove, AbleToAttackBoats, PositionsToAttack):
+    def chooseaction(self, Boat, AbleToMove, AbleToAttackBoats, PositionsToAttack, MessageBox1Tekst, MessageBox2Tekst):
         self.ActionPicked = "none"
         self.Display.fill(self.darkblue)
-        self.draw_game("","")
+        self.draw_game(MessageBox1Tekst,MessageBox2Tekst)
         self.draw_grid(PositionsToAttack, [])
         if AbleToMove == True:
             x = self.Width * 0.5 - 134
@@ -400,31 +400,28 @@ class Visual:
             self.ChooseActionButton(cancel_but, x_pos + 154, y_pos, 268, 68, 'cancel')
 
             self.Clock.tick(15)
-            
-        print(self.ActionPicked)
+         
         return self.ActionPicked
 
 ####
 
-    def ChooseActionPhase1(self, BoatsAbleForAction, BoatsAbleToMove, BoatsAbleToAttack): #AvaiblePlayCards_No):      #returns boatclass for boataction, returns 'play cards' or 'end turn'  
-        PositionPicked = self.selectcoordinate([], BoatsAbleForAction, True)
+    def ChooseActionPhase1(self, BoatsAbleForAction, BoatsAbleToMove, BoatsAbleToAttack, MessageBox1Tekst, MessageBox2Tekst): #AvaiblePlayCards_No):      #returns boatclass for boataction, returns 'play cards' or 'end turn'  
+        PositionPicked = self.selectcoordinate([], BoatsAbleForAction, True, MessageBox1Tekst, MessageBox2Tekst)
         if PositionPicked == "end turn":
             return "end turn"
         else:
             return PositionPicked.Boat
 
-    def ChooseBoatActionPhase2(self, Boat, AbleToMove, AbleToAttackBoats, PositionsToAttack): #returns 'attack when pressed attack, returns 'move' when pressed move, returns 'cancle' when cancled
-        Action = self.chooseaction(Boat, AbleToMove, AbleToAttackBoats, PositionsToAttack) #"attack", "move", "cancle"
+    def ChooseBoatActionPhase2(self, Boat, AbleToMove, AbleToAttackBoats, PositionsToAttack, MessageBox1Tekst, MessageBox2Tekst): #returns 'attack when pressed attack, returns 'move' when pressed move, returns 'cancle' when cancled
+        Action = self.chooseaction(Boat, AbleToMove, AbleToAttackBoats, PositionsToAttack, MessageBox1Tekst, MessageBox2Tekst) #"attack", "move", "cancle"
         return Action
     
-    def GetAttackActionPhase3(self, Boat, PositionsAbleToAttack, BoatsAbleToAttack): #returns ["stance", "left"/"right"/"inactive"] or ["move", "left"/"right","forward","backward"] or ["stop", "stop]  
-        BoatPicked = self.selectcoordinate([], BoatsAbleToAttack, False)
+    def GetAttackActionPhase3(self, Boat, PositionsAbleToAttack, BoatsAbleToAttack, MessageBox1Tekst, MessageBox2Tekst): #returns ["stance", "left"/"right"/"inactive"] or ["move", "left"/"right","forward","backward"] or ["stop", "stop]  
+        BoatPicked = self.selectcoordinate([], BoatsAbleToAttack, False,  MessageBox1Tekst, MessageBox2Tekst)
         boat = BoatPicked.Boat
         return boat
 
-    def GetMovementActionPhase3(self, Boat, PossibleStanceActions, PossibleMovementActions, PositionsToAttack): #returns ["stance", "left"/"right"/"inactive"] or ["move", "left"/"right","forward","backward"] or ["stop", "stop]  
-        print(PossibleStanceActions)
-        print("get movementactionphase3")
+    def GetMovementActionPhase3(self, Boat, PossibleStanceActions, PossibleMovementActions, PositionsToAttack, MessageBox1Tekst, MessageBox2Tekst): #returns ["stance", "left"/"right"/"inactive"] or ["move", "left"/"right","forward","backward"] or ["stop", "stop]  
         selectedboatpositions = Boat.GetLocalBoatsPositions(True, -1,-1,"inactive")
 
         MoveRight = False
@@ -455,7 +452,7 @@ class Visual:
         self.MovementPicked = "none"
         
         self.Display.fill(self.darkblue)
-        self.draw_game("","")
+        self.draw_game(MessageBox1Tekst, MessageBox2Tekst)
         self.draw_grid(PositionsToAttack, [])
 
         while self.MovementPicked == "none":

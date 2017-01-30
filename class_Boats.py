@@ -256,8 +256,6 @@ class Boat:
     def DealDamage(self, damageamount):
 
         self.Health -= damageamount
-        print(damageamount)
-        print(self.Health)
 
         if self.Health <= 0:
             LocalPositions = self.GetLocalBoatsPositions(True, -1, -1, 'inactive')
