@@ -60,7 +60,7 @@ class Boat:
                 self.Health = 2
                 self.MaxHealth = 2
                 self.Size = 2
-                self.MovementRange = 3
+                self.MovementRange = 50# 3
                 self.X_AttackRange = 2
                 self.Y_AttackRange = 2
                 self.DefensiveRange = 3
@@ -69,7 +69,7 @@ class Boat:
                 self.Health = 3
                 self.MaxHealth = 3
                 self.Size = 3
-                self.MovementRange = 2
+                self.MovementRange = 50#2
                 self.X_AttackRange = 3
                 self.Y_AttackRange = 3
                 self.DefensiveRange = 4
@@ -78,7 +78,7 @@ class Boat:
                 self.Health = 3
                 self.MaxHealth = 3
                 self.Size = 3
-                self.MovementRange = 2
+                self.MovementRange = 50# 2
                 self.X_AttackRange = 3
                 self.Y_AttackRange = 3
                 self.DefensiveRange = 4
@@ -104,7 +104,7 @@ class Boat:
 
 ############# POSITION CHANGE #############
 
-    def ChangeBoatPosition(self, PositionToMove):
+    def ChangeBoatPosition(self, PositionToMove, AvaibleMovements):
         xplus = 0
         yplus = 0
 
@@ -120,6 +120,65 @@ class Boat:
             print("PositionChange succes!")
         else:
             print("Error: changing position not possible!")
+
+        #checkifonendofmap
+        if self.Player == self.Game.Player1:
+            goal = 19
+            spawn = 0
+            NextPlus = 1
+        elif self.Player == self.Game.Player2:
+            goal = 0
+            spawn = 19
+            NextPlus = -1
+        else:
+            goal = -1
+            spawn = -1
+            NextPlus = -1
+
+        if self.Y == goal:
+            #end reached
+            print(self.Health)
+            if self.Health < self.MaxHealth:
+                self.Health += 1
+                #update visual!!!!
+            print(self.Health)
+
+            NextY = spawn + (self.Size - 1) * NextPlus
+            succes = False
+
+            xplus = 0
+            multiplier = 0
+            var = False
+            plus = 1
+
+            while succes == False:
+
+                xplus = xplus + multiplier * plus
+
+                if self.CheckIfPositionTaken(self.X + xplus, NextY, self.DefensiveStance) == True:
+                    self.ResetBoatPositions()
+                    self.Y = NextY
+                    self.X = self.X + xplus
+                    self.UpdateBoatPositions()
+                    succes = True
+                    print("PositionChange succes!")
+                    return 0
+
+                else:
+                    if var: plus = 1
+                    else: plus = -1
+                    var = not var
+                    multiplier += 1 
+
+                print (xplus)
+
+                if xplus < -22:
+                    print("placement error: removing boat")
+                    self.DealDamage(1000)
+                    return 0
+
+        return AvaibleMovements
+
 
     def ChangeBoatStance(self, FutureStance):
         if self.CheckIfPositionTaken(self.X, self.Y, FutureStance) == True:

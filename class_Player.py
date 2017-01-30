@@ -246,7 +246,7 @@ class Player:
             if MovementAction[0] == "move":
                 Action = MovementAction[1]
                 AvaibleMovements -= 1
-                Boat.ChangeBoatPosition(Action)
+                AvaibleMovements = Boat.ChangeBoatPosition(Action, AvaibleMovements)
                 self.Game.Visual.drawscreen()
                 time.sleep(0.5)
 
