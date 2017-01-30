@@ -82,7 +82,7 @@ class Boat:
                 self.Name = ["Merapi", "Amadea"][LocalBoatName]
                 self.Health = 4
                 self.Size = 4
-                self.MovementRange = 5#1
+                self.MovementRange = 50#1
                 self.X_AttackRange = 4
                 self.Y_AttackRange = 4
                 self.DefensiveRange = 5          
@@ -247,6 +247,19 @@ class Boat:
         #when finally a good coordinate: return the position
         return self.Game.GetPosition(x,y) 
 
+############ GET ATTACKED #################
+    def DealDamage(self, damageamount):
+
+        self.Health -= damageamount
+        print(damageamount)
+        print(self.Health)
+
+        if self.Health <= 0:
+            LocalPositions = self.GetLocalBoatsPositions(True, -1, -1, 'inactive')
+            for localpos in LocalPositions:
+                localpos.Boat = self.Game.EmptyBoat
+            self.Player.DeleteBoat(self)
+
 ############## POSITION CHECKS ############
 
     def GetPositionsInreachToAttack(self):
@@ -309,11 +322,11 @@ class Boat:
             opponent = self.Game.Player1
         elif self.Player == self.Game.Player1:
             opponent = self.Game.Player2
+        print(opponent.Name)
 
         BoatPositionsOfOpponent = opponent.GetPlayerBoatPositions([])
-
+    
         BoatsInReach = []
-
         for pos in PositionsInReach:
             if pos in BoatPositionsOfOpponent:
                 if pos.Boat not in BoatsInReach:

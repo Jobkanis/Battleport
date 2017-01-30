@@ -110,6 +110,7 @@ class Player:
                     LocalBoat = ActionPhase1
 
                     PositionsToAttack = LocalBoat.GetPositionsInreachToAttack()
+                    BoatsToAttack = LocalBoat.GetBoatsInReachToAttack()
 
                     AbleToMove = False
                     if LocalBoat.Name in AvaibleBoatsToMove:
@@ -123,7 +124,7 @@ class Player:
                     AbleToAttackBoats = False
                     if AvaibleAttacks_No > 0:
                         if LocalBoat.Name in AvaibleBoatsToAttack:
-                            if len(LocalBoat.GetBoatsInReachToAttack()) > 0:
+                            if len(BoatsToAttack) > 0:
                                 AbleToAttackBoats = True
                     
                     CheckPoint = False
@@ -137,6 +138,7 @@ class Player:
                             ######################### PHASE 3: ATTACKING A BOAT #####################################
                             AvaibleAttacks_No -= 1
                             AvaibleBoatsToAttack.remove(LocalBoat.Name)
+                            self.Attack(LocalBoat)
                             CheckPoint = True
                     
                         elif BoatAction == "move":
@@ -175,10 +177,12 @@ class Player:
     #    print("Choose a card to play: yet to be implemented")
     #    print("Play the card: yet to be implemented")
 
-    def Attack(self):
-        print("Check if ship in range: yet to be implemented")
-        print("Chooseboat: yet to be implemented")
-        print("Attackboat: yet to be implemented")
+    def Attack(self, Boat):
+        BoatPositionsAbleToAttack = Boat.GetPositionsInreachToAttack()
+        BoatsAbleToAttack = Boat.GetBoatsInReachToAttack()
+
+        BoatToAttack = self.Game.Visual.GetAttackActionPhase3(Boat, BoatPositionsAbleToAttack, BoatsAbleToAttack)
+        BoatToAttack.DealDamage(1)
 
     def MoveBoat(self, Boat):
         #CHOOSE MOVE ACTION TO DO
@@ -228,7 +232,7 @@ class Player:
 
             LocalBoatsToAttack = boatclass.GetBoatsInReachToAttack()
             if len(LocalBoatsToAttack) > 0:
-                boatclass.append(boat)
+                BoatsAbleToAttack.append(boatclass)
 
         return BoatsAbleToAttack
 
@@ -258,9 +262,8 @@ class Player:
     def GetPlayerBoatPositions(self, exception):
         BoatPositions = []
         for PlayerBoats in self.Boats:
-            for ExceptionBoats in exception:
-                if PlayerBoats.Name != ExceptionBoats.Name:
-                    BoatPositions += PlayerBoats.GetLocalBoatsPositions(True, -1, -1, "inactive")
+            if PlayerBoats not in exception:
+                BoatPositions += PlayerBoats.GetLocalBoatsPositions(True, -1, -1, "inactive")
         return BoatPositions
 
     def GetBoatFromName(self,BoatName):
@@ -268,3 +271,9 @@ class Player:
         for LocalBoat in Boats:
             if LocalBoat.Name == BoatName:
                 return LocalBoat
+
+    def DeleteBoat(self, Boat):
+        if Boat in self.Boats:
+            self.Boats.remove(Boat)
+        del Boat
+            

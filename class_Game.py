@@ -110,7 +110,6 @@ class Game:
         Player2Boats = self.Player2.Boats
         for localpositions in positions:
             localpositions.Boat = self.EmptyBoat
-
             for p1boats in Player1Boats:
                 allboatpositions = p1boats.GetLocalBoatsPositions(True, -1, -1, "inactive")
                 for p1allboats in allboatpositions:

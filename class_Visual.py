@@ -36,7 +36,7 @@ downarrow_but = [pygame.image.load('but/downarrow_button.png') , pygame.image.lo
 attack_but = [pygame.image.load('but/attack_button.png') , pygame.image.load('but/attack_button_over.png')]
 move_but = [pygame.image.load('but/move_button.png') , pygame.image.load('but/move_button_over.png')]
 cancel_but = [pygame.image.load('but/cancel_button.png') , pygame.image.load('but/cancel_button_over.png')]
-
+endturn_but = [pygame.image.load('but/End_Turn.png')]
 defensive_left = [pygame.image.load('but/Defensive_Left.png')]
 defensive_right = [pygame.image.load('but/Defensive_Right.png')]
 defensive_inactive = [pygame.image.load('but/Defensive_Inactive.png')]
@@ -167,7 +167,17 @@ class Visual:
             elif position.Boat.Player == self.Game.Player2:
                 self.Display.blit(column_boat_choosable_green,(x,y))  
 
+    def EndTurnButton (self, button, x, y, width, height, event=None):
+        
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
+
+        if (x + width) > mouse[0] > x and (y + height) > mouse[1] > y:
+
+            if click[0] == 1 and event != None:
+                self.PositionPicked = event
 #choose action
+
     def ChooseActionButton (self, button, x, y, width, height, event=None):
 
         mouse = pygame.mouse.get_pos()
@@ -181,7 +191,6 @@ class Visual:
             #self.Display.blit(button[0],(x,y))
             
 #Draw the game
-
 
     def grid_position_x(self, n):
 
@@ -274,7 +283,7 @@ class Visual:
         self.draw_grid([], [])
         self.display_refresh()
 
-    def selectcoordinate(self, Chooseablecoordinates, Chooseableboats):
+    def selectcoordinate(self, Chooseablecoordinates, Chooseableboats, ShowEndTurnDisplay):
         self.PositionPicked = self.Game.EmptyPosition
         while self.PositionPicked == self.Game.EmptyPosition:
 
@@ -286,6 +295,15 @@ class Visual:
             self.Display.fill(self.darkblue)
             self.draw_game()
             self.draw_grid(Chooseablecoordinates, Chooseableboats)
+
+            x_pos = self.Width * 0.5
+            y_pos = self.Height * 0.86
+            x = x_pos - 134
+            y = y_pos
+            if ShowEndTurnDisplay:
+                self.Display.blit(endturn_but[0],(x,y))
+                self.EndTurnButton(endturn_but, x, y, 268, 68, 'end turn')
+
             self.display_refresh()
 
         return self.PositionPicked
@@ -315,24 +333,15 @@ class Visual:
                 if event.type==pygame.QUIT:
                     pygame.quit()
                     self.exit()
-
-            if AbleToMove == True:
-
-                x_pos = self.Width * 0.5 - 134
-                y_pos = self.Height * 0.86
-
-                self.ChooseActionButton(move_but, x_pos, y_pos, 268, 68, 'move')
-
-                
-            if AbleToAttackBoats == True:
-                
-                x_pos = self.Width * 0.5 - 422
-                y_pos = self.Height * 0.86
-                self.ChooseActionButton(attack_but, x_pos, y_pos, 268, 68, 'attack')
-            
-            x_pos = self.Width * 0.5 + 154
+            x_pos = self.Width * 0.5 
             y_pos = self.Height * 0.86
-            self.ChooseActionButton(cancel_but, x_pos, y_pos, 268, 68, 'cancel')
+            if AbleToMove == True:
+                self.ChooseActionButton(move_but, x_pos- 134, y_pos, 268, 68, 'move')
+
+            if AbleToAttackBoats == True:
+                self.ChooseActionButton(attack_but, x_pos - 422, y_pos, 268, 68, 'attack')
+            
+            self.ChooseActionButton(cancel_but, x_pos + 154, y_pos, 268, 68, 'cancel')
 
             self.Clock.tick(15)
             
@@ -342,13 +351,21 @@ class Visual:
 ####
 
     def ChooseActionPhase1(self, BoatsAbleForAction, BoatsAbleToMove, BoatsAbleToAttack): #AvaiblePlayCards_No):      #returns boatclass for boataction, returns 'play cards' or 'end turn'  
-        PositionPicked = self.selectcoordinate([], BoatsAbleForAction)
-        return PositionPicked.Boat
+        PositionPicked = self.selectcoordinate([], BoatsAbleForAction, True)
+        if PositionPicked == "end turn":
+            return "end turn"
+        else:
+            return PositionPicked.Boat
 
     def ChooseBoatActionPhase2(self, Boat, AbleToMove, AbleToAttackBoats, PositionsToAttack): #returns 'attack when pressed attack, returns 'move' when pressed move, returns 'cancle' when cancled
         Action = self.chooseaction(Boat, AbleToMove, AbleToAttackBoats, PositionsToAttack) #"attack", "move", "cancle"
         return Action
     
+    def GetAttackActionPhase3(self, Boat, PositionsAbleToAttack, BoatsAbleToAttack): #returns ["stance", "left"/"right"/"inactive"] or ["move", "left"/"right","forward","backward"] or ["stop", "stop]  
+        BoatPicked = self.selectcoordinate([], BoatsAbleToAttack, False)
+        boat = BoatPicked.Boat
+        return boat
+
     def GetMovementActionPhase3(self, Boat, PossibleStanceActions, PossibleMovementActions, PositionsToAttack): #returns ["stance", "left"/"right"/"inactive"] or ["move", "left"/"right","forward","backward"] or ["stop", "stop]  
         print(PossibleStanceActions)
         print("get movementactionphase3")
