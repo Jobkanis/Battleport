@@ -2,6 +2,8 @@ import pygame
 import class_Game
 import time
 #import class_Game
+import sqlite3
+
 
 ################  IMAGES  ################
 
@@ -45,10 +47,14 @@ class Menu:
         self.loop = True
         self.Game = game
         self.Clicked = 0
+        
         #colours
         self.darkblue = (15,15,23)
+        self.white = (255,255,255)
+        
         self.HelpCheckPoint = False
         self.Cooldown = 0
+        self.font = pygame.font.SysFont('Calibri', 20)
     
     def show_logo (self):
 
@@ -78,11 +84,14 @@ class Menu:
         if (x + width) > mouse[0] > x and (y + height) > mouse[1] > y:
             self.Display.blit(button[1],(x,y))
             if click[0] == 1 and event != None:
-                self.Clicked = self.Clicked + 1
-                if self.Clicked > 0:
-                    self.Clicked = 0
-                    self.loop = False
-                    self.menu_start(event)
+                if event == 'add new':
+                    self.add_new()
+                else:
+                    self.Clicked = self.Clicked + 1
+                    if self.Clicked > 0:
+                        self.Clicked = 0
+                        self.loop = False
+                        self.menu_start(event)
 
 
         else:
@@ -113,6 +122,39 @@ class Menu:
     def show_main (self):
 
         self.show_top10()
+        
+        connection = sqlite3.connect('battleport.db')
+        c = connection.cursor()
+
+        c.execute("SELECT * FROM players ORDER BY wins DESC")
+        count = 1
+        y_pos = (self.Height * 0.3) + 75
+
+        for row in c.fetchall():
+            x_pos = (self.Width * 0.1) + 10
+
+            self.addText(str(count) + '. ' + row[0], x_pos, y_pos, 100, 20)
+            x_pos += 200
+
+            self.addText(str(int(row[1])), x_pos, y_pos, 100, 20)
+            x_pos += 50
+
+            self.addText(str(int(row[2])), x_pos, y_pos, 100, 20)
+            x_pos += 50
+
+            if row[1] != 0 and row[2] != 0:
+                ratio = int(row[1]) / int(row[2])
+                self.addText(str(ratio), x_pos, y_pos, 100, 20)
+            elif row[1] != 0 and row[2] == 0:
+                self.addText(str(row[1]), x_pos, y_pos, 100, 20)
+            else:
+                self.addText('0', x_pos, y_pos, 100, 20)
+
+            if count >= 10:
+                break
+
+            count += 1
+            y_pos += 20
 
         but_x = self.Width * 0.65
         but_y = self.Height * 0.35
@@ -128,21 +170,20 @@ class Menu:
         self.button(exit_but, but_x, but_y, 268, 68, 'exit')
 
     def show_new_game (self):
-        self.Game.Play()
-        self.exit()
-        """
         but_x = (self.Width * 0.5) - 134
         but_y = self.Height * 0.3
 
-        self.button(chooseplayers_but, but_x, but_y, 268, 68, 'next turn')
+        self.button(chooseplayers_but, but_x, but_y, 268, 68, 'choose players')
         but_y += 130
 
-        self.button(addnewplayer_but, but_x, but_y, 268, 68, 'main menu')
+        self.button(addnewplayer_but, but_x, but_y, 268, 68, 'add new')
         but_y += 130
 
         self.button(back_but, but_x, but_y, 268, 68, 'main menu')
-        """   #starts game
-   
+
+    def show_add_new (self):
+        pass
+        
     def show_help (self, c_help):
         self.HelpCheckPoint = False
         self.loop = True
@@ -201,6 +242,7 @@ class Menu:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.loop = False
+                    self.exit()
 
             self.Display.fill(self.darkblue)
         
@@ -210,7 +252,7 @@ class Menu:
             self.show(name)
 
             self.menu_display_refresh()
-       
+            
     def show(self, name):
 
         if name == 'main menu':
@@ -228,6 +270,17 @@ class Menu:
 
         elif name == 'help':
             self.show_help(1)
+
+        elif name == 'choose players':
+            self.Game.Play()
+            self.exit()
+
+        elif name == 'add new':
+            pass
+            #self.Game.Database.data_entry(newplayer)
+                        
+    def addText(self, text, x, y, width, height):
+        self.Display.blit(self.font.render(text, True, self.white, (width, height)),(x,y))
 
     def menu_display_refresh (self):
         pygame.display.flip()
