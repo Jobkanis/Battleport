@@ -377,7 +377,6 @@ class Visual:
             x = x_pos - 134
             y = y_pos
 
-            print(ShowEndTurnDisplay)
             if ShowEndTurnDisplay:
                 self.Display.blit(endturn_but[0],(x,y))                
                 self.EndTurnButton(endturn_but, x, y, 268, 68, 'end turn')

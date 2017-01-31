@@ -143,11 +143,9 @@ class Boat:
             if self.Game.Sound_enabled:
                 self.Game.game_won.play()
             #end reached
-            print(self.Health)
             if self.Health < self.MaxHealth:
                 self.Health += 1
                 #update visual!!!!
-            print(self.Health)
 
             NextY = spawn + (self.Size - 1) * NextPlus
             succes = False
@@ -175,8 +173,6 @@ class Boat:
                     else: plus = -1
                     var = not var
                     multiplier += 1 
-
-                print (xplus)
 
                 if xplus < -22:
                     print("placement error: removing boat")
@@ -417,7 +413,6 @@ class Boat:
             opponent = self.Game.Player1
         elif self.Player == self.Game.Player1:
             opponent = self.Game.Player2
-        print(opponent.Name)
 
         BoatPositionsOfOpponent = opponent.GetPlayerBoatPositions([])
     
