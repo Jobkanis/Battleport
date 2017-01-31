@@ -13,12 +13,7 @@ logoimg = pygame.image.load('img/logo.png')
 backgroundshipimg = pygame.image.load('img/background_ship.png')
 
 #Tutorial
-tutimg_place = pygame.image.load('img/tutorial_place-ships.png')
-tutimg_turn = pygame.image.load('img/tutorial_turn.png')
-tutimg_move = pygame.image.load('img/tutorial_move.png')
-tutimg_attack = pygame.image.load('img/tutorial_attack.png')
-
-
+tutimg = [pygame.image.load('img/tutorial_place-ships.png'), pygame.image.load('img/tutorial_turn.png'), pygame.image.load('img/tutorial_move.png'), pygame.image.load('img/tutorial_attack.png')]
 
 #Columns
 column_normalimg = [pygame.image.load('grid/column.png') , pygame.image.load('grid/column_over.png')]
@@ -93,33 +88,13 @@ class Visual:
         pos = (pos_x,pos_y)
         self.Display.blit(backgroundshipimg,pos)
 
-    def show_tut_place(self):
+    def show_tut(self):
+
 
         pos_x = (self.Width*0.5) - 400
         pos_y = (self.Height*0.5) - 177
         pos = (pos_x,pos_y)
-        self.Display.blit(tutimg_place_, pos)
-
-    def show_tut_turn(self):
-
-        pos_x = (self.Width*0.5) - 400
-        pos_y = (self.Height*0.5) - 177
-        pos = (pos_x,pos_y)
-        self.Display.blit(tutimg_turn, pos)
-
-    def show_tut_move(self):
-
-        pos_x = (self.Width*0.5) - 400
-        pos_y = (self.Height*0.5) - 177
-        pos = (pos_x,pos_y)
-        self.Display.blit(tutimg_move, pos)
-
-    def show_tut_att(self):
-
-        pos_x = (self.Width*0.5) - 400
-        pos_y = (self.Height*0.5) - 177
-        pos = (pos_x,pos_y)
-        self.Display.blit(tutimg_attack, pos)
+        self.Display.blit(tutimg, pos)
 
     ##########################################
 
@@ -638,12 +613,15 @@ class Visual:
                     self.exit()
 
 
-
             self.Display.fill(self.darkblue)
             self.show_backgroundship()
             self.show_logo()
-            self.show_tut_move()
 
+
+            pos_x = (self.Width * 0.5) - 400
+            pos_y = (self.Height * 0.5) - 177
+            pos = (pos_x, pos_y)
+            self.Display.blit(tutimg[helpscreen], pos)
 
             
             #draw the helpscreen
