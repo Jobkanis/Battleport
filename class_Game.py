@@ -29,7 +29,7 @@ class Game:
         self.Visual = class_Visual.Visual(self, gameDisplay, clock, width, height)
         self.Database = database.Database()
 
-    def setupgame(self):
+    def setupgame(self, player1name, player2name):
         if self.Sound_enabled == True:
             pygame.mixer.music.load("sound/bgm_ingame.wav")
             pygame.mixer.music.set_volume(0.5)
@@ -57,10 +57,10 @@ class Game:
         self.game_won = pygame.mixer.Sound('game_won.wav')
         self.game_over = pygame.mixer.Sound('game_over.wav')
 
-        self.Player1 = class_Player.Player(self, "player1")
+        self.Player1 = class_Player.Player(self, player1name)
         self.Players.append(self.Player1)
 
-        self.Player2 = class_Player.Player(self, "player2")
+        self.Player2 = class_Player.Player(self, player2name)
         self.Players.append(self.Player2)
 
         self.Winner = self.EmptyPlayer
@@ -74,7 +74,7 @@ class Game:
         self.Player2.CreateBoats()      
         
         self.Play()  
-
+        return self.Winner
         #sounds
 
     def Play(self):
@@ -88,7 +88,9 @@ class Game:
 
         if self.Sound_enabled:
             self.game_over.play()
+
         self.Visual.DrawWinnerScreen()
+        
 
 ############# USEABLE GAME FUNCTIONS #############
 

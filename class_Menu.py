@@ -4,7 +4,7 @@ import time
 #import class_Game
 import sqlite3
 from tkinter import *
-
+import database
 
 
 ################  IMAGES  ################
@@ -49,7 +49,10 @@ class Menu:
         self.loop = True
         self.Game = game
         self.Clicked = 0
-        
+        self.Playing = False
+        self.Played = False
+        self.Database = database.Database()
+
         #colours
         self.darkblue = (15,15,23)
         self.white = (255,255,255)
@@ -57,6 +60,7 @@ class Menu:
         self.HelpCheckPoint = False
         self.Cooldown = 0
         self.font = pygame.font.SysFont('Calibri', 20)
+        self.headfont = pygame.font.SysFont('Calibri', 35)
 
         self.player1 = ''
         self.player2 = ''
@@ -93,10 +97,10 @@ class Menu:
                 if self.Clicked > 0:
                     self.Clicked = 0
                     self.loop = False
-                    if event == 'choose players':
-                        InputBox(self.Game, 'Player 1')
 
-                        InputBox(self.Game, 'Player 2')
+                    if event == 'choose players' and self.Playing == False:
+                        self.Playing = True
+                        self.Pick_Players()
                     self.menu_start(event)
 
 
@@ -107,8 +111,7 @@ class Menu:
     
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
-        print(self.CurrentHelp)
-        
+
         if (x + width) > mouse[0] > x and (y + height) > mouse[1] > y:
 
             self.Display.blit(button[1],(x,y))
@@ -128,11 +131,12 @@ class Menu:
     def show_main (self):
 
         self.show_top10()
-        
+
+        #highscore
         connection = sqlite3.connect('battleport.db')
         c = connection.cursor()
 
-        c.execute("SELECT * FROM players ORDER BY wins DESC")
+        c.execute("SELECT * FROM players ORDER BY wins DESC, losses ASC")
         count = 1
         y_pos = (self.Height * 0.3) + 75
 
@@ -156,7 +160,7 @@ class Menu:
             else:
                 self.addText('0', x_pos, y_pos, 100, 20)
 
-            if count >= 10:
+            if count >= 12:
                 break
 
             count += 1
@@ -165,7 +169,7 @@ class Menu:
         but_x = self.Width * 0.65
         but_y = self.Height * 0.35
 
-        self.button(newgame_but, but_x, but_y, 268, 68, 'new game')
+        self.button(newgame_but, but_x, but_y, 268, 68, 'pickplayer')
         but_y += 100
 
         self.CurrentHelp = 0
@@ -174,18 +178,6 @@ class Menu:
         but_y += 100
 
         self.button(exit_but, but_x, but_y, 268, 68, 'exit')
-
-    def show_new_game (self):
-        but_x = (self.Width * 0.5) - 134
-        but_y = self.Height * 0.3
-
-        self.button(chooseplayers_but, but_x, but_y, 268, 68, 'choose players')
-        but_y += 130
-
-        self.button(addnewplayer_but, but_x, but_y, 268, 68, 'add new')
-        but_y += 130
-
-        self.button(back_but, but_x, but_y, 268, 68, 'main menu')
 
     def show_choose_players (self):
         x_pos = (self.Width * 0.5) - 134
@@ -226,10 +218,6 @@ class Menu:
 
             self.menu_display_refresh()
 
-
-    def GetNextHelpButton(self, event):
-        pass
-
     def show_nextturn (self):
 
         but_x = (self.Width*0.5) - 134
@@ -237,6 +225,57 @@ class Menu:
 
         self.button(startturn_but, but_x, but_y, 268, 68, 'main menu')
 
+    def Pick_Players(self):
+        if self.Played == False:
+            self.Played = True
+            self.Display.fill(self.darkblue)
+            self.show_backgroundship()
+            self.show_logo ()
+            self.Display.blit(self.headfont.render("Please insert the name of Player 1 in the opened textbox", True, self.white, (700, 100)),(self.Width * 0.5 - 375 , self.Height * 0.5 - 50))
+            self.menu_display_refresh()
+            checkpoint = False
+            while checkpoint == False:
+                checkpoint = True
+                p1 = InputBox(self.Game, 'Player 1')
+                if p1.player1 == "":
+                    checkpoint = False
+
+        
+            self.Display.fill(self.darkblue)
+            self.show_backgroundship()
+            self.show_logo ()
+            self.Display.blit(self.headfont.render("Please insert the name of Player 2 in the opened textbox", True, self.white, (700, 100)),(self.Width * 0.5 - 375 , self.Height * 0.5 - 50))
+            self.menu_display_refresh()
+            checkpoint = False
+            while checkpoint == False:
+                checkpoint = True
+                p2 = InputBox(self.Game, 'Player 2')
+                if p2.player2 == "" or p2.player2 == p1.player1:
+                    checkpoint = False
+    
+
+            self.player1 = p1.player1
+            self.player2 = p2.player2
+
+            self.Display.fill(self.darkblue)
+            self.show_backgroundship()
+            self.show_logo ()
+            self.Display.blit(self.headfont.render("Starting game | Player 1: " + self.player1 + " | Player2: " + self.player2, True, self.white, (700, 100)),(self.Width * 0.5 - 350 , self.Height * 0.5 - 50))
+            self.menu_display_refresh()
+            time.sleep(3)
+
+            winner = self.Game.setupgame(self.player1, self.player2)
+            if winner.Name == self.player1:
+                print(self.player1 + " wins!")
+                self.Game.Database.player_win(self.player1)
+                self.Game.Database.player_lose(self.player2)
+            elif winner.Name == self.player2:
+                print(self.player2 + " wins!")
+                self.Game.Database.player_win(self.player2)
+                self.Game.Database.player_lose(self.player1)
+
+            self.loop = False
+        
     ##########################################
 
     ################  FUNCTIONS  ################
@@ -258,18 +297,14 @@ class Menu:
             self.show_logo()
 
             self.show(name)
-
-            self.menu_display_refresh()
+            if self.loop == True:
+                self.menu_display_refresh()
             
     def show(self, name):
 
         if name == 'main menu':
 
             self.show_main()
-
-        elif name == 'new game':
-
-            self.show_new_game()
 
         elif name == 'exit':
 
@@ -279,12 +314,8 @@ class Menu:
         elif name == 'help':
             self.show_help(1)
 
-        elif name == 'start game':
-            self.Game.Play()
-            self.exit()
-
-        elif name == 'choose players':
-            self.show_choose_players()
+        elif name == 'pickplayer':
+            self.Pick_Players()
                         
     def addText(self, text, x, y, width, height):
         self.Display.blit(self.font.render(text, True, self.white, (width, height)),(x,y))
@@ -299,7 +330,6 @@ class Menu:
         quit()
 
 class InputBox:
-
     def __init__ (self, game, player):
         self.master = Tk()
         self.master.title('Enter your name')
@@ -323,14 +353,15 @@ class InputBox:
         self.master.mainloop()
 
     def get_name (self):
+
         name = self.usertext.get()
         self.Game.Database.data_entry(name)
 
         if self.player == 'Player 1':
-            variable1 = name # This will be player 1
+            self.player1 = name # This will be player 1
 
         elif self.player == 'Player 2':
-            variable2 = name # This will be player 2
+            self.player2 = name # This will be player 2
 
         self.close_window()
 

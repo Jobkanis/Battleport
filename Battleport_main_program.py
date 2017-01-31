@@ -32,16 +32,21 @@ pygame.mixer.music.play(-1)
 width = 1280
 height = 720
 size = (width,height)
-
 ################  GAME DISPLAY  ################
 gameDisplay = pygame.display.set_mode(size)
 pygame.display.set_caption('Battleport')
 clock = pygame.time.Clock()
 
 ################  START MENU  ################
-NewGame = class_Game.Game(gameDisplay, clock, width, height)
-Menu = class_Menu.Menu(NewGame, gameDisplay, clock, width, height)
-Menu.menu_start('main menu')
+while True:
+    NewGame = class_Game.Game(gameDisplay, clock, width, height)
+
+    Menu = class_Menu.Menu(NewGame, gameDisplay, clock, width, height)
+
+    Menu.menu_start('main menu')
+
+    NewGame = NotImplemented
+    Menu = NotImplemented
 
 
 #start game (remove """)

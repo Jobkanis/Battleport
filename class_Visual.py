@@ -74,6 +74,8 @@ class Visual:
         #Colors
         self.darkblue = (15,15,23)
         self.white = (255, 255, 255)
+        self.red = (255, 0, 0)
+        self.green = (0, 255, 0)
         self.Help = False
 
     def show_logo (self):
@@ -144,7 +146,8 @@ class Visual:
 
     def addText(self, text, x, y, width, height):
         self.Display.blit(self.font.render(text, True, self.white, (width, height)),(x+5,y+5))
-
+    def addColorText(self, color, text, x, y, width, height):
+        self.Display.blit(self.font.render(text, True, color, (width, height)),(x+5,y+5))
     def addHead(self, text, x, y, width, height):
         self.Display.blit(self.headfont.render(text, True, self.white, (width, height)),(x+5,y+5))
 
@@ -152,9 +155,9 @@ class Visual:
         self.addRect(x, y, width, height, 1)
         self.addText(text, x, y, width, height)
 
-    def Playerstats(self, x, y, width, height, line1, line2, line3, line4, line5):
+    def Playerstats(self, x, y, width, height, line1, line2, line3, line4, line5, color):
         self.addRect(x, y, width, height, 2)
-        self.addText(line1, x, y + 5, width, height)
+        self.addColorText(color, line1, x, y + 5, width, height)
         self.addText(line2, x, y + 35, width, height)
         self.addText(line3, x, y + 60, width, height)
         self.addText(line4, x, y + 85, width, height)
@@ -167,7 +170,7 @@ class Visual:
     def GetPlayerStatsString(self, Player):
         line1 = " "; line2 = " "; line3 = " "; line4 = " "; line5 = " "
         boats = Player.Boats
-        line1 = str(Player.Name) + "s stats:"
+        line1 = str(Player.Name) + "'s stats:"
         if len(boats) > 0:
             localboat = boats[0]
             line2 = self.Getstringfromboat(boats[0])
@@ -338,10 +341,13 @@ class Visual:
 
         
         Player1Text = self.GetPlayerStatsString(self.Game.Player1)
-        self.Playerstats(10, 170, 350, 200, Player1Text[0], Player1Text[1], Player1Text[2], Player1Text[3], Player1Text[4])
+        color = self.red
+            
+        self.Playerstats(10, 170, 350, 200, Player1Text[0], Player1Text[1], Player1Text[2], Player1Text[3], Player1Text[4], color)
         
         Player2Text = self.GetPlayerStatsString(self.Game.Player2)
-        self.Playerstats(10, 400, 350, 200, Player2Text[0], Player2Text[1], Player2Text[2], Player2Text[3], Player2Text[4])
+        color = self.green
+        self.Playerstats(10, 400, 350, 200, Player2Text[0], Player2Text[1], Player2Text[2], Player2Text[3], Player2Text[4], color)
 
         if help != -1:
             self.helpopenbutton(self.Width * 0.5 + 282, self.Height * 0.1 + 13 ,  68, 68, help)

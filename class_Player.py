@@ -197,11 +197,11 @@ class Player:
 
         self.Boats.append(class_Boats.Boat(self.Game, self, "size2"))
 
-        self.Boats.append(class_Boats.Boat(self.Game, self, "size31"))
+        #self.Boats.append(class_Boats.Boat(self.Game, self, "size31"))
 
-        self.Boats.append(class_Boats.Boat(self.Game, self, "size32"))
+        #self.Boats.append(class_Boats.Boat(self.Game, self, "size32"))
 
-        self.Boats.append(class_Boats.Boat(self.Game, self, "size4"))
+        #self.Boats.append(class_Boats.Boat(self.Game, self, "size4"))
 
 ##################  ACTIONS (Phase 3) #########################
 
