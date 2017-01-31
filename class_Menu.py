@@ -3,6 +3,8 @@ import class_Game
 import time
 #import class_Game
 import sqlite3
+from tkinter import *
+
 
 
 ################  IMAGES  ################
@@ -55,6 +57,9 @@ class Menu:
         self.HelpCheckPoint = False
         self.Cooldown = 0
         self.font = pygame.font.SysFont('Calibri', 20)
+
+        self.player1 = ''
+        self.player2 = ''
     
     def show_logo (self):
 
@@ -84,14 +89,15 @@ class Menu:
         if (x + width) > mouse[0] > x and (y + height) > mouse[1] > y:
             self.Display.blit(button[1],(x,y))
             if click[0] == 1 and event != None:
-                if event == 'add new':
-                    self.add_new()
-                else:
-                    self.Clicked = self.Clicked + 1
-                    if self.Clicked > 0:
-                        self.Clicked = 0
-                        self.loop = False
-                        self.menu_start(event)
+                self.Clicked = self.Clicked + 1
+                if self.Clicked > 0:
+                    self.Clicked = 0
+                    self.loop = False
+                    if event == 'choose players':
+                        InputBox(self.Game, 'Player 1')
+
+                        InputBox(self.Game, 'Player 2')
+                    self.menu_start(event)
 
 
         else:
@@ -170,8 +176,6 @@ class Menu:
         self.button(exit_but, but_x, but_y, 268, 68, 'exit')
 
     def show_new_game (self):
-        self.Game.setupgame()
-
         but_x = (self.Width * 0.5) - 134
         but_y = self.Height * 0.3
 
@@ -183,8 +187,10 @@ class Menu:
 
         self.button(back_but, but_x, but_y, 268, 68, 'main menu')
 
-    def show_add_new (self):
-        pass
+    def show_choose_players (self):
+        x_pos = (self.Width * 0.5) - 134
+        y_pos = self.Height * 0.6
+        self.button(startturn_but, x_pos, y_pos, 268, 68, 'start game')
         
     def show_help (self, c_help):
         self.HelpCheckPoint = False
@@ -273,13 +279,12 @@ class Menu:
         elif name == 'help':
             self.show_help(1)
 
-        elif name == 'choose players':
+        elif name == 'start game':
             self.Game.Play()
             self.exit()
 
-        elif name == 'add new':
-            pass
-            #self.Game.Database.data_entry(newplayer)
+        elif name == 'choose players':
+            self.show_choose_players()
                         
     def addText(self, text, x, y, width, height):
         self.Display.blit(self.font.render(text, True, self.white, (width, height)),(x,y))
@@ -292,3 +297,42 @@ class Menu:
     def exit (self):
         pygame.quit()
         quit()
+
+class InputBox:
+
+    def __init__ (self, game, player):
+        self.master = Tk()
+        self.master.title('Enter your name')
+
+        self.Game = game
+
+        self.player = player
+
+        self.player1 = ''
+        self.player2 = ''
+
+        self.mybutton = Button(self.master, text = 'Enter', command = self.get_name)
+        self.mybutton.grid(row = 1, column = 0)
+
+        self.usertext = StringVar()
+        self.usertext.set(player)
+        self.myentry = Entry(self.master, textvariable = self.usertext)
+        self.myentry.grid(row = 0, column = 0)
+        self.counter = 0
+
+        self.master.mainloop()
+
+    def get_name (self):
+        name = self.usertext.get()
+        self.Game.Database.data_entry(name)
+
+        if self.player == 'Player 1':
+            variable1 = name # This will be player 1
+
+        elif self.player == 'Player 2':
+            variable2 = name # This will be player 2
+
+        self.close_window()
+
+    def close_window (self):
+        self.master.destroy()
