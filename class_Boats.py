@@ -311,7 +311,7 @@ class Boat:
             spacenum = 72 - length
             halfspacenum = int(spacenum / 2)
             MessageBox2Tekst = " " * halfspacenum + MessageBox2Tekst
-            coordinate = self.Game.Visual.selectcoordinate(allowedpositions, [], False, MessageBox1Tekst, MessageBox2Tekst)
+            coordinate = self.Game.Visual.selectcoordinate(allowedpositions, [], False, MessageBox1Tekst, MessageBox2Tekst, 0)
             return coordinate
 
 

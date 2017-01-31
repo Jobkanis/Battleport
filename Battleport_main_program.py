@@ -39,17 +39,16 @@ pygame.display.set_caption('Battleport')
 clock = pygame.time.Clock()
 
 ################  START MENU  ################
-
-#Menu = class_Menu.Menu(gameDisplay, clock, width, height)
-#Menu.menu_start('main menu')
+NewGame = class_Game.Game(gameDisplay, clock, width, height)
+Menu = class_Menu.Menu(NewGame, gameDisplay, clock, width, height)
+Menu.menu_start('main menu')
 
 
 #start game (remove """)
 
 ################ START GAME ###################
 
-NewGame = class_Game.Game(gameDisplay, clock, width, height)
-NewGame.Play()
+
 
 
 

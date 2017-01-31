@@ -170,6 +170,8 @@ class Menu:
         self.button(exit_but, but_x, but_y, 268, 68, 'exit')
 
     def show_new_game (self):
+        self.Game.setupgame()
+
         but_x = (self.Width * 0.5) - 134
         but_y = self.Height * 0.3
 

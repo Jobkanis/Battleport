@@ -15,6 +15,8 @@ backgroundshipimg = pygame.image.load('img/background_ship.png')
 #Tutorial
 tutimg = [pygame.image.load('img/tutorial_place-ships.png'), pygame.image.load('img/tutorial_turn.png'), pygame.image.load('img/tutorial_move.png'), pygame.image.load('img/tutorial_attack.png')]
 
+#place ships: 0. turn: 1, move: 2, attack: 3
+
 #Columns
 column_normalimg = [pygame.image.load('grid/column.png') , pygame.image.load('grid/column_over.png')]
 column_choosable = [pygame.image.load('grid/column_choosable.png') , pygame.image.load('grid/column_choosable_over.png')]
@@ -45,9 +47,8 @@ defensive_right = [pygame.image.load('but/Defensive_Right.png')]
 defensive_inactive = [pygame.image.load('but/Defensive_Inactive.png')]
 continue_to_menu = [pygame.image.load('but/continue_to_menu_button.png')]
 contine = [pygame.image.load('but/continue_button.png')]
-
+help_button_small = [pygame.image.load('but/Help_ingame_button.png')]
 ##########################################
-
 
 class Visual:
 
@@ -73,7 +74,8 @@ class Visual:
         #Colors
         self.darkblue = (15,15,23)
         self.white = (255, 255, 255)
-           
+        self.Help = False
+
     def show_logo (self):
 
         pos_x = 15
@@ -100,18 +102,6 @@ class Visual:
 
     ################  FUNCTIONS  ################
 
-    def show(self, name):
-
-        #draw the game
-        if name == 'game':
-
-            self.draw_game()
-        
-        #draw the game
-        elif name == 'next turn':
-
-            self.show_nextturn()
-
     def display_refresh (self):
 
         pygame.display.flip()
@@ -122,7 +112,14 @@ class Visual:
        pygame.quit()
        quit()
 #############################################################
-
+    
+    def helpopenbutton(self, x, y, width, height, event=None):
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
+        self.Display.blit(help_button_small[0],(x , y))
+        if (x + width) > mouse[0] > x and (y + height) > mouse[1] > y:
+            if click[0] == 1 and event != None:
+                self.showhelp(event)
 
     def ContinueToNextPlayerButton (self, button, x, y, width, height, event=None): 
         mouse = pygame.mouse.get_pos()
@@ -134,15 +131,13 @@ class Visual:
             if click[0] == 1 and event != None:
                 self.ActionPicked = event    
 
-
     def Movementbutton (self, mouse, click, button, x, y, width, height, event=None): 
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
         self.Display.blit(button[0],(x,y))
         if (x + width) > mouse[0] > x and (y + height) > mouse[1] > y:
             if click[0] == 1 and event != None:
-                self.MovementPicked = event
-            #self.Display.blit(button[1],(x,y))           
+                self.MovementPicked = event      
 
     def addRect(self, x, y, width, height, outline):
         self.rect = pygame.draw.rect(self.Display, self.white, (x, y, width, height), outline)
@@ -333,7 +328,7 @@ class Visual:
             pos_y += 25
         PositionClass = self.Game.GetPosition(pos_x , pos_y)
     
-    def draw_game(self, MessageBox1Tekst, MessageBox2Tekst):
+    def draw_game(self, MessageBox1Tekst, MessageBox2Tekst, help):
         self.show_backgroundship()
         self.show_logo()
 
@@ -348,6 +343,10 @@ class Visual:
         Player2Text = self.GetPlayerStatsString(self.Game.Player2)
         self.Playerstats(10, 400, 350, 200, Player2Text[0], Player2Text[1], Player2Text[2], Player2Text[3], Player2Text[4])
 
+        if help != -1:
+            self.helpopenbutton(self.Width * 0.5 + 282, self.Height * 0.1 + 13 ,  68, 68, help)
+            
+
 #################### interactive funcitons ###############
     def drawscreen(self):
         for event in pygame.event.get():
@@ -356,29 +355,31 @@ class Visual:
                 self.exit()
 
         self.Display.fill(self.darkblue)
-        self.draw_game("","")
+        self.draw_game("","", -1)
         self.draw_grid([], [])
         self.display_refresh()
 
-    def selectcoordinate(self, Chooseablecoordinates, Chooseableboats, ShowEndTurnDisplay, MessageBox1Tekst, MessageBox2Tekst):
+    def selectcoordinate(self, Chooseablecoordinates, Chooseableboats, ShowEndTurnDisplay, MessageBox1Tekst, MessageBox2Tekst, help):
         self.PositionPicked = self.Game.EmptyPosition
         while self.PositionPicked == self.Game.EmptyPosition:
-
             for event in pygame.event.get():
                 if event.type==pygame.QUIT:
                     pygame.quit()
                     self.exit()
 
             self.Display.fill(self.darkblue)
-            self.draw_game(MessageBox1Tekst, MessageBox2Tekst)
+            
+            self.draw_game(MessageBox1Tekst, MessageBox2Tekst, help)
             self.draw_grid(Chooseablecoordinates, Chooseableboats)
 
             x_pos = self.Width * 0.5
             y_pos = self.Height * 0.86
             x = x_pos - 134
             y = y_pos
+
+            print(ShowEndTurnDisplay)
             if ShowEndTurnDisplay:
-                self.Display.blit(endturn_but[0],(x,y))
+                self.Display.blit(endturn_but[0],(x,y))                
                 self.EndTurnButton(endturn_but, x, y, 268, 68, 'end turn')
 
             self.display_refresh()
@@ -388,7 +389,7 @@ class Visual:
     def chooseaction(self, Boat, AbleToMove, AbleToAttackBoats, PositionsToAttack, MessageBox1Tekst, MessageBox2Tekst):
         self.ActionPicked = "none"
         self.Display.fill(self.darkblue)
-        self.draw_game(MessageBox1Tekst,MessageBox2Tekst)
+        self.draw_game(MessageBox1Tekst,MessageBox2Tekst, 1)
         self.draw_grid(PositionsToAttack, [])
         if AbleToMove == True:
             x = self.Width * 0.5 - 134
@@ -421,13 +422,15 @@ class Visual:
             self.ChooseActionButton(cancel_but, x_pos + 154, y_pos, 268, 68, 'cancel')
 
             self.Clock.tick(15)
-         
+            self.helpopenbutton(self.Width * 0.5 + 282, self.Height * 0.1 + 13,  68, 68, 1)
+
         return self.ActionPicked
 
 ####
 
     def ChooseActionPhase1(self, BoatsAbleForAction, BoatsAbleToMove, BoatsAbleToAttack, MessageBox1Tekst, MessageBox2Tekst): #AvaiblePlayCards_No):      #returns boatclass for boataction, returns 'play cards' or 'end turn'  
-        PositionPicked = self.selectcoordinate([], BoatsAbleForAction, True, MessageBox1Tekst, MessageBox2Tekst)
+        #place ships: 0. turn: 1, move: 2, attack: 3
+        PositionPicked = self.selectcoordinate([], BoatsAbleForAction, True, MessageBox1Tekst, MessageBox2Tekst, 1)
         if PositionPicked == "end turn":
             return "end turn"
         else:
@@ -438,84 +441,86 @@ class Visual:
         return Action
     
     def GetAttackActionPhase3(self, Boat, PositionsAbleToAttack, BoatsAbleToAttack, MessageBox1Tekst, MessageBox2Tekst): #returns ["stance", "left"/"right"/"inactive"] or ["move", "left"/"right","forward","backward"] or ["stop", "stop]  
-        BoatPicked = self.selectcoordinate([], BoatsAbleToAttack, False,  MessageBox1Tekst, MessageBox2Tekst)
+        BoatPicked = self.selectcoordinate([], BoatsAbleToAttack, False,  MessageBox1Tekst, MessageBox2Tekst, 3)
         boat = BoatPicked.Boat
         return boat
 
     def GetMovementActionPhase3(self, Boat, PossibleStanceActions, PossibleMovementActions, PositionsToAttack, MessageBox1Tekst, MessageBox2Tekst): #returns ["stance", "left"/"right"/"inactive"] or ["move", "left"/"right","forward","backward"] or ["stop", "stop]  
-        selectedboatpositions = Boat.GetLocalBoatsPositions(True, -1,-1,"inactive")
-
-        MoveRight = False
-        MoveLeft = False
-        MoveForward = False
-        MoveBackward = False
-        for possiblemovement in PossibleMovementActions:
-            if possiblemovement == "left":
-                MoveLeft = True
-            elif possiblemovement == "right":
-                MoveRight = True
-            elif possiblemovement == "forward":
-                MoveForward = True
-            elif possiblemovement == "backward":
-                MoveBackward = True
-
-        StanceLeft = False
-        StanceRight = False
-        StanceInactive = False
-        for possiblestance in PossibleStanceActions:
-            if possiblestance == "left":
-                StanceLeft = True
-            elif possiblestance == "right":
-                StanceRight = True
-            elif possiblestance == "inactive":
-                StanceInactive = True
-       
         self.MovementPicked = "none"
-        
-        self.Display.fill(self.darkblue)
-        self.draw_game(MessageBox1Tekst, MessageBox2Tekst)
-        self.draw_grid(PositionsToAttack, [])
 
         while self.MovementPicked == "none":
-            
-            mouse = pygame.mouse.get_pos()
-            click = pygame.mouse.get_pressed()
-    
-            for event in pygame.event.get():
-                if event.type==pygame.QUIT:
-                    pygame.quit()
-                    self.exit()
+            self.Help = False
+            selectedboatpositions = Boat.GetLocalBoatsPositions(True, -1,-1,"inactive")
+
+            MoveRight = False
+            MoveLeft = False
+            MoveForward = False
+            MoveBackward = False
+            for possiblemovement in PossibleMovementActions:
+                if possiblemovement == "left":
+                    MoveLeft = True
+                elif possiblemovement == "right":
+                    MoveRight = True
+                elif possiblemovement == "forward":
+                    MoveForward = True
+                elif possiblemovement == "backward":
+                    MoveBackward = True
+
+            StanceLeft = False
+            StanceRight = False
+            StanceInactive = False
+            for possiblestance in PossibleStanceActions:
+                if possiblestance == "left":
+                    StanceLeft = True
+                elif possiblestance == "right":
+                    StanceRight = True
+                elif possiblestance == "inactive":
+                    StanceInactive = True
         
-            x_pos = self.Width * 0.8
-            y_pos = self.Height * 0.75
-
-            if MoveRight == True:
-                self.Movementbutton(mouse, click, rightarrow_but, x_pos + 33, y_pos - 34, 68, 68, ["move", "right"])
-            if MoveLeft == True:
-                self.Movementbutton(mouse, click, leftarrow_but, x_pos - 101, y_pos - 34, 68, 68, ["move", "left"])
-            if MoveForward == True:
-                self.Movementbutton(mouse, click, uparrow_but, x_pos - 34, y_pos - 101, 68, 68, ["move", "forward"])
-            if MoveBackward == True:
-                self.Movementbutton(mouse, click, downarrow_but, x_pos - 34, y_pos + 33, 68, 68, ["move", "backward"])
+            self.Display.fill(self.darkblue)
+            self.draw_game(MessageBox1Tekst, MessageBox2Tekst, 2)
+            self.draw_grid(PositionsToAttack, [])
             
-            self.Movementbutton(mouse, click, x_but, x_pos - 34, y_pos - 34, 68, 68, ["stop", "stop"])
+            while self.MovementPicked == "none" and self.Help == False:
+            
+                mouse = pygame.mouse.get_pos()
+                click = pygame.mouse.get_pressed()
+    
+                for event in pygame.event.get():
+                    if event.type==pygame.QUIT:
+                        pygame.quit()
+                        self.exit()
+        
+                x_pos = self.Width * 0.8
+                y_pos = self.Height * 0.75
 
+                if MoveRight == True:
+                    self.Movementbutton(mouse, click, rightarrow_but, x_pos + 33, y_pos - 34, 68, 68, ["move", "right"])
+                if MoveLeft == True:
+                    self.Movementbutton(mouse, click, leftarrow_but, x_pos - 101, y_pos - 34, 68, 68, ["move", "left"])
+                if MoveForward == True:
+                    self.Movementbutton(mouse, click, uparrow_but, x_pos - 34, y_pos - 101, 68, 68, ["move", "forward"])
+                if MoveBackward == True:
+                    self.Movementbutton(mouse, click, downarrow_but, x_pos - 34, y_pos + 33, 68, 68, ["move", "backward"])
+            
+                self.Movementbutton(mouse, click, x_but, x_pos - 34, y_pos - 34, 68, 68, ["stop", "stop"])
 
-            self.Movementbutton(mouse, click, x_but, x_pos - 34, y_pos - 34, 68, 68, ["stop", "stop"])
+                self.Movementbutton(mouse, click, x_but, x_pos - 34, y_pos - 34, 68, 68, ["stop", "stop"])
 
-            x_pos = self.Width * 0.5 
-            y_pos = self.Height * 0.86
+                x_pos = self.Width * 0.5 
+                y_pos = self.Height * 0.86
 
-            if StanceLeft == True:
-                self.Movementbutton(mouse, click, defensive_left, x_pos - 288, y_pos, 268, 68, ["stance", "left"])
-            if StanceInactive == True:
-                self.Movementbutton(mouse, click, defensive_inactive, x_pos - 144, y_pos, 268, 68, ["stance", "inactive"])   
-            if StanceRight == True:
-                self.Movementbutton(mouse, click, defensive_right, x_pos + 20, y_pos, 268, 68, ["stance", "right"])         
+                if StanceLeft == True:
+                    self.Movementbutton(mouse, click, defensive_left, x_pos - 288, y_pos, 268, 68, ["stance", "left"])
+                if StanceInactive == True:
+                    self.Movementbutton(mouse, click, defensive_inactive, x_pos - 144, y_pos, 268, 68, ["stance", "inactive"])   
+                if StanceRight == True:
+                    self.Movementbutton(mouse, click, defensive_right, x_pos + 20, y_pos, 268, 68, ["stance", "right"])         
 
-      
-            pygame.display.flip()
-            self.Clock.tick(15)
+                self.helpopenbutton(self.Width * 0.5 + 282, self.Height * 0.1 + 13,  68, 68, 2)
+
+                pygame.display.flip()
+                self.Clock.tick(15)
 
         action = self.MovementPicked
         return action
@@ -602,8 +607,8 @@ class Visual:
         self.drawscreen()
         time.sleep(0.5)
 
-
     def showhelp(self, helpscreen):
+        self.Help = True
         self.ActionPicked = "none"
         while self.ActionPicked == "none":
             
@@ -613,13 +618,8 @@ class Visual:
                     self.exit()
 
 
-            self.Display.fill(self.darkblue)
-            self.show_backgroundship()
-            self.show_logo()
-
-
             pos_x = (self.Width * 0.5) - 400
-            pos_y = (self.Height * 0.5) - 177
+            pos_y = (self.Height * 0.5) - 300
             pos = (pos_x, pos_y)
             self.Display.blit(tutimg[helpscreen], pos)
 
@@ -631,7 +631,9 @@ class Visual:
             
 
             self.display_refresh()
-        self.draw_game()
+
+        self.drawscreen()
         time.sleep(1)
+
 
     ####

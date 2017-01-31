@@ -9,16 +9,13 @@ import class_Boats
 import class_Positions
 import class_Visual
 import class_Menu
+import database
 
 class Game:
     def __init__(self, gameDisplay, clock, width, height):
         #creating classes
         self.Sound_enabled = True
-        if self.Sound_enabled == True:
-            pygame.mixer.music.load("sound/bgm_ingame.wav")
-            pygame.mixer.music.set_volume(0.5)
-            pygame.mixer.music.play(-1)
-        ######### Empty Variables ###########
+
         self.Players = []
         self.Positions = []
 
@@ -32,6 +29,13 @@ class Game:
         self.Visual = class_Visual.Visual(self, gameDisplay, clock, width, height)
         self.Database = database.Database()
 
+    def setupgame(self):
+        if self.Sound_enabled == True:
+            pygame.mixer.music.load("sound/bgm_ingame.wav")
+            pygame.mixer.music.set_volume(0.5)
+            pygame.mixer.music.play(-1)
+        ######### Empty Variables ###########
+
         ########## Empty Classes ##########
         self.EmptyPlayer = class_Player.Player(self, "empty")
         self.Players.append(self.EmptyPlayer)
@@ -39,7 +43,6 @@ class Game:
         self.EmptyPosition = class_Positions.Position(self, -1, -1)
         self.Positions.append(self.EmptyPosition)
         
-
         self.EmptyBoat = class_Boats.Boat(self, self.EmptyPlayer, "empty")
         self.EmptyPlayer.Boats.append(self.EmptyBoat)
 
@@ -68,7 +71,9 @@ class Game:
 
         self.Player_Playing = self.Player2
         self.Visual.show_nextturn(self.Player_Playing)
-        self.Player2.CreateBoats()        
+        self.Player2.CreateBoats()      
+        
+        self.Play()  
 
         #sounds
 
