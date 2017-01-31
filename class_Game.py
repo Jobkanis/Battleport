@@ -13,7 +13,13 @@ import class_Menu
 class Game:
     def __init__(self, gameDisplay, clock, width, height):
         #creating classes
-
+        
+        #BGM in-game
+        pygame.mixer.music.stop
+        pygame.mixer.music.load("sound/bgm_ingame.wav")
+        pygame.mixer.music.play(-1)
+        
+        
         ######### Empty Variables ###########
         self.Players = []
         self.Positions = []
