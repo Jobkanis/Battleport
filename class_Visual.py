@@ -40,7 +40,8 @@ endturn_but = [pygame.image.load('but/End_Turn.png')]
 defensive_left = [pygame.image.load('but/Defensive_Left.png')]
 defensive_right = [pygame.image.load('but/Defensive_Right.png')]
 defensive_inactive = [pygame.image.load('but/Defensive_Inactive.png')]
-
+continue_to_menu = [pygame.image.load('but/continue_to_menu_button.png')]
+contine = [pygame.image.load('but/continue_button.png')]
 ##########################################
 
 
@@ -55,7 +56,7 @@ class Visual:
         self.Height = height
         self.Size = (width, height)
         self.font = pygame.font.SysFont('Calibri', 20)
-
+        self.headfont = pygame.font.SysFont('Calibri', 50)
         self.loop = False
 
         self.move_boat = False
@@ -83,13 +84,7 @@ class Visual:
         pos = (pos_x,pos_y)
         self.Display.blit(backgroundshipimg,pos)
 
-    def show_nextturn (self):
-
-        but_x = (self.Width*0.5) - 134
-        but_y = (self.Height*0.65)
-
-        self.button(startturn_but, but_x, but_y, 268, 68, 'next turn')
-
+ 
     ##########################################
 
     ################  FUNCTIONS  ################
@@ -117,7 +112,8 @@ class Visual:
        quit()
 #############################################################
 
-    def ContinueToMenuButton (self, mouse, click, button, x, y, width, height, event=None): 
+
+    def ContinueToNextPlayerButton (self, button, x, y, width, height, event=None): 
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
 
@@ -125,8 +121,7 @@ class Visual:
 
         if (x + width) > mouse[0] > x and (y + height) > mouse[1] > y:
             if click[0] == 1 and event != None:
-                self.ActionPicked = event
-        self.Display.blit(button[1],(x,y))      
+                self.ActionPicked = event    
 
 
     def Movementbutton (self, mouse, click, button, x, y, width, height, event=None): 
@@ -143,6 +138,9 @@ class Visual:
 
     def addText(self, text, x, y, width, height):
         self.Display.blit(self.font.render(text, True, self.white, (width, height)),(x+5,y+5))
+
+    def addHead(self, text, x, y, width, height):
+        self.Display.blit(self.headfont.render(text, True, self.white, (width, height)),(x+5,y+5))
 
     def MessageBox(self, text, x, y, width, height):
         self.addRect(x, y, width, height, 1)
@@ -512,7 +510,17 @@ class Visual:
         return action
 
     def DrawWinnerScreen(self):
-        self.ActinPicked = "none"
+        self.Display.fill(self.darkblue)
+        self.show_backgroundship()
+        self.show_logo()
+
+        x_pos = self.Width * 0.5 
+        y_pos = self.Height * 0.3
+        self.addHead( "Congratulations! " + str(self.Game.Winner.Name) +  " won!", x_pos - 300, y_pos - 25, 600, 50)
+
+        self.display_refresh()
+        time.sleep(1)
+        self.ActionPicked = "none"
         while self.ActionPicked == "none":
             
             for event in pygame.event.get():
@@ -520,16 +528,100 @@ class Visual:
                     pygame.quit()
                     self.exit()
 
-            x_pos = self.Width * 0.5 
-            y_pos = self.Height * 0.86
+
 
             self.Display.fill(self.darkblue)
             self.show_backgroundship()
             self.show_logo()
 
-            self.rect = pygame.draw.rect(self.Display, self.white, (x, y, width, height), outline)
+            
+
+            x_pos = self.Width * 0.5 
+            y_pos = self.Height * 0.3
+
+            self.addHead( "Congratulations! " + str(self.Game.Winner.Name) +  " won!", x_pos - 300, y_pos - 25, 600, 50)
+
+            x_pos = self.Width * 0.5 
+            y_pos = self.Height * 0.7
+            self.ContinueToNextPlayerButton (continue_to_menu, x_pos - 144, y_pos - 34, 268, 68, "pressed")
             
 
             self.display_refresh()
 
-####
+    def show_nextturn (self, player):
+        
+        
+        self.Display.fill(self.darkblue)
+        self.show_backgroundship()
+        self.show_logo()
+
+        x_pos = self.Width * 0.5 
+        y_pos = self.Height * 0.3
+        self.addHead("It is " + str(player.Name) +  "'s turn!", x_pos - 190, y_pos - 25, 380, 50)
+
+        self.display_refresh()
+        time.sleep(1)
+        self.ActionPicked = "none"
+        while self.ActionPicked == "none":
+            
+            for event in pygame.event.get():
+                if event.type==pygame.QUIT:
+                    pygame.quit()
+                    self.exit()
+
+
+
+            self.Display.fill(self.darkblue)
+            self.show_backgroundship()
+            self.show_logo()
+
+            
+
+            x_pos = self.Width * 0.5 
+            y_pos = self.Height * 0.3
+
+            self.addHead("It is " + str(player.Name) +  "'s turn!", x_pos - 190, y_pos - 25, 380, 50)
+
+            x_pos = self.Width * 0.5 
+            y_pos = self.Height * 0.7
+            self.ContinueToNextPlayerButton (contine, x_pos - 144, y_pos - 34, 268, 68, "pressed")
+            
+
+            self.display_refresh()
+        self.drawscreen()
+        time.sleep(0.5)
+
+
+    def showhelp(self, helpscreen):
+        self.ActionPicked = "none"
+        while self.ActionPicked == "none":
+            
+            for event in pygame.event.get():
+                if event.type==pygame.QUIT:
+                    pygame.quit()
+                    self.exit()
+
+
+
+            self.Display.fill(self.darkblue)
+            self.show_backgroundship()
+            self.show_logo()
+
+            
+            #draw the helpscreen
+            x_pos = self.Width * 0.5 
+            y_pos = self.Height * 0.3
+
+
+
+
+            x_pos = self.Width * 0.5 
+            y_pos = self.Height * 0.7
+            self.ContinueToNextPlayerButton (continue_to_menu, x_pos - 144, y_pos - 34, 268, 68, "pressed")
+            
+
+            self.display_refresh()
+        self.draw_game()
+        time.sleep(1)
+
+    ####

@@ -285,30 +285,31 @@ class Boat:
 
         while check == False:
             #### PICKING POSITION TO PLACE BOAT: YET TO BE IMPLEMENTED ####
-
-
+            allowedpositions = []
             if self.Player == Player1:
-                x = random.randint(1,19) #int(input("Player: " + self.Player.Name + "| Boat: " + self.Name + "| Insert X Postion (0-19): "))
-                y = random.randint(0,4) #int(input("Player: " + self.Player.Name + "| Boat: " + self.Name + "| Insert Y Postion (0-19): "))
+                y = 0 + self.Size - 1
             elif self.Player == Player2:
-                x = random.randint(1,19) #int(input("Player: " + self.Player.Name + "| Boat: " + self.Name + "| Insert X Postion (0-19): "))
-                y = random.randint(15,19) #int(input("Player: " + self.Player.Name + "| Boat: " + self.Name + "| Insert Y Postion (0-19): ")) 
-            else:
-                x = -1; x = -1 #definately triggers the loop
-            
+                y = 19 - self.Size + 1
+            else: 
+                return(self.Game.GetPosition(-1,-1))
+
+            for x in range(0,20):
+                check = self.CheckIfPositionTaken(x,y, "inactive")
+                if check == True:
+                    localposition = self.Game.GetPosition(x,y)
+                    allowedpositions.append(localposition)
+
+            MessageBox1Tekst = " " * 41 + "Select a place to place your boat"
+            MessageBox2Tekst = "Boat to place: " + str(self.Name) + " | Size: " + str(self.Size) +  "| Health: " + str(self.Health)
+            length = len(MessageBox2Tekst)
+            spacenum = 72 - length
+            halfspacenum = int(spacenum / 2)
+            MessageBox2Tekst = " " * halfspacenum + MessageBox2Tekst
+            coordinate = self.Game.Visual.selectcoordinate(allowedpositions, [], False, MessageBox1Tekst, MessageBox2Tekst)
+            return coordinate
+
 
             ###############################################################
-
-            check = self.CheckIfPositionTaken(x, y, "inactive")
-            
-            if check == False:
-                print("Boat could not be placed on coordinates: " + str(x) + " , " + str(y))
-            else:
-                print("Player: " + self.Player.Name + "| Boat: " + self.Name + "| Coordinates: " + str(x) + " , " + str(y))
-        
-
-        #when finally a good coordinate: return the position
-        return self.Game.GetPosition(x,y) 
 
 ############ GET ATTACKED #################
     def DealDamage(self, damageamount):

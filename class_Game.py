@@ -14,11 +14,6 @@ class Game:
     def __init__(self, gameDisplay, clock, width, height):
         #creating classes
 
-        #BGM in-game
-        pygame.mixer.music.stop
-        pygame.mixer.music.load("sound/bgm_ingame.wav")
-        pygame.mixer.music.play(-1)
-        
         ######### Empty Variables ###########
         self.Players = []
         self.Positions = []
@@ -51,25 +46,31 @@ class Game:
 
         self.Player2 = class_Player.Player(self, "player2")
         self.Players.append(self.Player2)
-        
-
-        
-        self.Player1.CreateBoats()
-        self.Player2.CreateBoats()        
 
         self.Winner = self.EmptyPlayer
 
-        #self.Visual.DrawWinnerScreen()
+        self.Player_Playing = self.Player1
+        self.Visual.show_nextturn(self.Player_Playing)
+        self.Player1.CreateBoats()
+
+        self.Player_Playing = self.Player2
+        self.Visual.show_nextturn(self.Player_Playing)
+        self.Player2.CreateBoats()        
+
+        
+
+        
 
     def Play(self):
         self.Player_Playing = self.Player2        
         while self.Winner == self.EmptyPlayer:
-            self.Player_Playing = self.NextPlayer()
-            print("\nIt is " + self.Player_Playing.Name + " his turn")
-            self.Player_Playing.PlayTurn()
-            print("next player")
 
-        DrawWinnerScreen(self)
+            self.Player_Playing = self.NextPlayer()
+            self.Visual.show_nextturn(self.Player_Playing)
+
+            self.Player_Playing.PlayTurn()
+
+        self.Visual.DrawWinnerScreen()
 
 ############# USEABLE GAME FUNCTIONS #############
 
