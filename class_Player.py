@@ -53,7 +53,7 @@ class Player:
         #The actual possible moves the player can do (loop)
         LocalDone = False
 
-        while LocalDone == False:
+        while LocalDone == False and self.Game.Winner == self.Game.EmptyPlayer:
 
             Actions = ["boataction", "play cards", "end turn"]
             
@@ -309,4 +309,12 @@ class Player:
         if Boat in self.Boats:
             self.Boats.remove(Boat)
         del Boat
+
+        if len(self.Boats) == 0:
             
+            if self == self.Game.Player1:
+                opponent = self.Game.Player2
+            elif self == self.Game.Player2:
+                opponent = self.Game.Player1
+            self.Game.Winner = opponent
+            print(self.Game.Winner.Name)

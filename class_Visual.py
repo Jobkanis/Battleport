@@ -117,6 +117,18 @@ class Visual:
        quit()
 #############################################################
 
+    def ContinueToMenuButton (self, mouse, click, button, x, y, width, height, event=None): 
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
+
+        self.Display.blit(button[0],(x,y))
+
+        if (x + width) > mouse[0] > x and (y + height) > mouse[1] > y:
+            if click[0] == 1 and event != None:
+                self.ActionPicked = event
+        self.Display.blit(button[1],(x,y))      
+
+
     def Movementbutton (self, mouse, click, button, x, y, width, height, event=None): 
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
@@ -499,6 +511,25 @@ class Visual:
         action = self.MovementPicked
         return action
 
+    def DrawWinnerScreen(self):
+        self.ActinPicked = "none"
+        while self.ActionPicked == "none":
+            
+            for event in pygame.event.get():
+                if event.type==pygame.QUIT:
+                    pygame.quit()
+                    self.exit()
 
+            x_pos = self.Width * 0.5 
+            y_pos = self.Height * 0.86
+
+            self.Display.fill(self.darkblue)
+            self.show_backgroundship()
+            self.show_logo()
+
+            self.rect = pygame.draw.rect(self.Display, self.white, (x, y, width, height), outline)
+            
+
+            self.display_refresh()
 
 ####

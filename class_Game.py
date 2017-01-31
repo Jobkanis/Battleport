@@ -52,14 +52,19 @@ class Game:
         self.Player1.CreateBoats()
         self.Player2.CreateBoats()        
 
+        self.Winner = self.EmptyPlayer
+
+        #self.Visual.DrawWinnerScreen()
 
     def Play(self):
         self.Player_Playing = self.Player2        
-        while self.Checkifwon() == self.EmptyPlayer:
+        while self.Winner == self.EmptyPlayer:
             self.Player_Playing = self.NextPlayer()
             print("\nIt is " + self.Player_Playing.Name + " his turn")
             self.Player_Playing.PlayTurn()
             print("next player")
+
+        DrawWinnerScreen(self)
 
 ############# USEABLE GAME FUNCTIONS #############
 
