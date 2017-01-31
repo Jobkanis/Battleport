@@ -30,6 +30,7 @@ class Game:
         self.Player2 = NotImplemented
 
         self.Visual = class_Visual.Visual(self, gameDisplay, clock, width, height)
+        self.Database = database.Database()
 
         ########## Empty Classes ##########
         self.EmptyPlayer = class_Player.Player(self, "empty")
