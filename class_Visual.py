@@ -123,7 +123,6 @@ class Visual:
             if click[0] == 1 and event != None:
                 self.ActionPicked = event    
 
-
     def Movementbutton (self, mouse, click, button, x, y, width, height, event=None): 
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
@@ -590,7 +589,6 @@ class Visual:
             self.display_refresh()
         self.drawscreen()
         time.sleep(0.5)
-
 
     def showhelp(self, helpscreen):
         self.ActionPicked = "none"

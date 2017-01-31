@@ -309,8 +309,6 @@ class Boat:
             return coordinate
 
 
-            ###############################################################
-
 ############ GET ATTACKED #################
     def DealDamage(self, damageamount):
 
@@ -333,7 +331,9 @@ class Boat:
             for pos in ownpositions:
                 y = pos.Y
                 x = pos.X
-
+                
+                PlusLeft = False
+                PlusRight = False
                 #yrange
                 for Range in range(1, self.Y_AttackRange + 1):
                     if self.Player == self.Game.Player1:
@@ -343,36 +343,58 @@ class Boat:
                     elif self.Player == self.Game.Player2:
                         localpos1 = self.Game.GetPosition(x, y + Range)
                         localpos2 = self.Game.GetPosition(x, y - Range) #somehow adds all coordinates where from boat (size - 1 + range)
-
-                    if localpos1 != self.Game.EmptyPosition and localpos1.Boat != self:
+                
+                    if localpos1 != self.Game.EmptyPosition and localpos1.Boat != self and PlusLeft == False:
                         attackpositions.append(localpos1)
-                    if localpos2 != self.Game.EmptyPosition and localpos1.Boat != self:
+                        if localpos1.Boat != self.Game.EmptyBoat:
+                            PlusLeft = True
+
+                    if localpos2 != self.Game.EmptyPosition and localpos2.Boat != self and PlusRight == False:
                         attackpositions.append(localpos2)
+                        if localpos2.Boat != self.Game.EmptyBoat:
+                            PlusRight = True
 
                 #xrange
+                PlusUp = False
+                PlusDown = False
                 for i in range(1, self.X_AttackRange + 1):
                     localpos3 = self.Game.GetPosition(x - i, y)
                     localpos4 = self.Game.GetPosition(x + i, y)
                     
-                    if localpos3 != self.Game.EmptyPosition and localpos1.Boat != self:
+                    if localpos3 != self.Game.EmptyPosition and localpos3.Boat != self and PlusUp == False:
                         attackpositions.append(localpos3)
-                    if localpos4 != self.Game.EmptyPosition and localpos1.Boat != self:
+                        if localpos3.Boat != self.Game.EmptyBoat:
+                            PlusUp = True
+
+                    if localpos4 != self.Game.EmptyPosition and localpos4.Boat != self and PlusDown == False:
                         attackpositions.append(localpos4)
+                        if localpos4.Boat != self.Game.EmptyBoat:
+                            PlusDown = True
 
         else:
 
             for pos in ownpositions:
+
                 y = pos.Y
                 x = pos.X
-                for i in range(1, self.DefensiveRange + 1):
 
+                PlusLeft2 = False
+                PlusRight2 = False
+
+                for i in range(1, self.DefensiveRange + 1):
+                    
                     localpos1 = self.Game.GetPosition(x, y+i)
                     localpos2 = self.Game.GetPosition(x, y-i)
 
-                    if localpos1 != self.Game.EmptyPosition and localpos1.Boat != self:
-                        attackpositions.append(localpos1)                    
-                    if localpos2 != self.Game.EmptyPosition and localpos1.Boat != self:
+                    if localpos1 != self.Game.EmptyPosition and localpos1.Boat != self and PlusLeft2 == False:
+                        attackpositions.append(localpos1)    
+                        if localpos1.Boat != self.Game.EmptyBoat:
+                            PlusLeft2 = True
+
+                    if localpos2 != self.Game.EmptyPosition and localpos2.Boat != self and PlusRight2 == False:
                         attackpositions.append(localpos2)
+                        if localpos2.Boat != self.Game.EmptyBoat:
+                            PlusRight2 = True
 
         return(attackpositions)
 
