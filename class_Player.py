@@ -122,10 +122,13 @@ class Player:
                 MessageBox2Tekst = " " * halfspacenum + MessageBox2Tekst
 
                 ActionPhase1 = self.Game.Visual.ChooseActionPhase1(BoatsAbleForAction, BoatsAbleToMove, BoatsAbleToAttack, MessageBox1Tekst, MessageBox2Tekst) #AvaiblePlayCards_No) #returns boatclass for boataction, returns 'play cards' or 'end turn'
+                
                 print("Action 1 chosen")
 
                 if ActionPhase1 in BoatsAbleToAttack or ActionPhase1 in BoatsAbleToMove:  #returned a boat to move
                     ############# PHASE 2: PICKING A BOAT ACTION #########################
+                    if self.Game.Sound_enabled:
+                        self.Game.ship_select_sound.play()
                     LocalBoat = ActionPhase1
 
                     PositionsToAttack = LocalBoat.GetPositionsInreachToAttack()
@@ -156,7 +159,8 @@ class Player:
                         halfspacenum = int(spacenum / 2)
                         MessageBox2Tekst = " " * halfspacenum + MessageBox2Tekst
                         BoatAction = self.Game.Visual.ChooseBoatActionPhase2(LocalBoat, AbleToMove, AbleToAttackBoats, PositionsToAttack, MessageBox1Tekst, MessageBox2Tekst) #returns 'attack when pressed attack, returns 'move' when pressed move, returns 'cancel' when cancled
-
+                        if self.Game.Sound_enabled:
+                            self.Game.ship_select_sound.play()
                         print("action chosen")
                         if BoatAction == "attack":
                             ######################### PHASE 3: ATTACKING A BOAT #####################################
@@ -241,20 +245,26 @@ class Player:
             MovementAction = self.Game.Visual.GetMovementActionPhase3(Boat, PossibleStanceActions, PossibleMovementActions, PositionsToAttack, MessageBox1Tekst, MessageBox2Tekst)  #returns ["stance", "left"/"right"/"inactive"]        or         ["move", "left"/"right","forward","backward"]       or        ["stop", "stop]
 
             if MovementAction[0] == "stance":
+                if self.Game.Sound_enabled:
+                    self.Game.move_sound.play()
                 Action = MovementAction[1]
                 AvaibleMovements -= 1
                 Boat.ChangeBoatStance(Action)
                 self.Game.Visual.drawscreen()            
-                time.sleep(0.5)
+                time.sleep(0.7)
 
             if MovementAction[0] == "move":
+                if self.Game.Sound_enabled:
+                    self.Game.move_sound.play()
                 Action = MovementAction[1]
                 AvaibleMovements -= 1
                 AvaibleMovements = Boat.ChangeBoatPosition(Action, AvaibleMovements)
                 self.Game.Visual.drawscreen()
-                time.sleep(0.5)
+                time.sleep(0.7)
 
             if MovementAction[0] == "stop":
+                if self.Game.Sound_enabled:
+                    self.Game.ship_select_sound.play()
                 print("Stopped moving boat")
                 LocalDone = True
 

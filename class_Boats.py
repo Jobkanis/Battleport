@@ -94,6 +94,8 @@ class Boat:
         
         if self.Player != EmptyPlayer:
             BoatPosition = self.PickBoatPosition() #returns position class
+            if self.Game.Sound_enabled:
+                self.Game.ship_select_sound.play()
             if BoatPosition in self.Game.Positions: #makes sure the position exists: fixes error in creating empty class"
                 self.X = BoatPosition.X
                 self.Y = BoatPosition.Y
@@ -136,6 +138,10 @@ class Boat:
             NextPlus = -1
 
         if self.Y == goal:
+            self.Game.Visual.drawscreen()
+            time.sleep(0.6)
+            if self.Game.Sound_enabled:
+                self.Game.game_won.play()
             #end reached
             print(self.Health)
             if self.Health < self.MaxHealth:
@@ -150,7 +156,7 @@ class Boat:
             multiplier = 0
             var = False
             plus = 1
-
+            
             while succes == False:
 
                 xplus = xplus + multiplier * plus
@@ -311,10 +317,15 @@ class Boat:
 
 ############ GET ATTACKED #################
     def DealDamage(self, damageamount):
+        if self.Game.Sound_enabled:
+            self.Game.att_sound.play()
 
         self.Health -= damageamount
 
         if self.Health <= 0:
+            time.sleep(0.7)
+            if self.Game.Sound_enabled:
+                self.Game.sink_sound.play()
             LocalPositions = self.GetLocalBoatsPositions(True, -1, -1, 'inactive')
             for localpos in LocalPositions:
                 localpos.Boat = self.Game.EmptyBoat

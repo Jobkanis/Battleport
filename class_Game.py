@@ -13,13 +13,11 @@ import class_Menu
 class Game:
     def __init__(self, gameDisplay, clock, width, height):
         #creating classes
-        
-        #BGM in-game
-        pygame.mixer.music.stop
-        pygame.mixer.music.load("sound/bgm_ingame.wav")
-        pygame.mixer.music.play(-1)
-        
-        
+        self.Sound_enabled = True
+        if self.Sound_enabled == True:
+            pygame.mixer.music.load("sound/bgm_ingame.wav")
+            pygame.mixer.music.set_volume(0.5)
+            pygame.mixer.music.play(-1)
         ######### Empty Variables ###########
         self.Players = []
         self.Positions = []
@@ -47,6 +45,14 @@ class Game:
         ################ Players ###################
         self.CreatePositions() #Create all positions
 
+        self.att_sound = pygame.mixer.Sound('ship_att.wav')
+        self.sink_sound = pygame.mixer.Sound('ship_dead.wav')
+        self.goal_sound = pygame.mixer.Sound('ship_dead.wav')
+        self.move_sound = pygame.mixer.Sound('ship_move.wav')
+        self.ship_select_sound = pygame.mixer.Sound('ship_select.wav')
+        self.game_won = pygame.mixer.Sound('game_won.wav')
+        self.game_over = pygame.mixer.Sound('game_over.wav')
+
         self.Player1 = class_Player.Player(self, "player1")
         self.Players.append(self.Player1)
 
@@ -63,19 +69,19 @@ class Game:
         self.Visual.show_nextturn(self.Player_Playing)
         self.Player2.CreateBoats()        
 
-        
-
-        
+        #sounds
 
     def Play(self):
         self.Player_Playing = self.Player2        
         while self.Winner == self.EmptyPlayer:
-
+            time.sleep(1)
             self.Player_Playing = self.NextPlayer()
             self.Visual.show_nextturn(self.Player_Playing)
 
             self.Player_Playing.PlayTurn()
 
+        if self.Sound_enabled:
+            self.game_over.play()
         self.Visual.DrawWinnerScreen()
 
 ############# USEABLE GAME FUNCTIONS #############
