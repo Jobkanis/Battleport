@@ -12,6 +12,14 @@ logoimg = pygame.image.load('img/logo.png')
 #Background ship
 backgroundshipimg = pygame.image.load('img/background_ship.png')
 
+#Tutorial
+tutimg_place = pygame.image.load('img/tutorial_place-ships.png')
+tutimg_turn = pygame.image.load('img/tutorial_turn.png')
+tutimg_move = pygame.image.load('img/tutorial_move.png')
+tutimg_attack = pygame.image.load('img/tutorial_attack.png')
+
+
+
 #Columns
 column_normalimg = [pygame.image.load('grid/column.png') , pygame.image.load('grid/column_over.png')]
 column_choosable = [pygame.image.load('grid/column_choosable.png') , pygame.image.load('grid/column_choosable_over.png')]
@@ -42,6 +50,7 @@ defensive_right = [pygame.image.load('but/Defensive_Right.png')]
 defensive_inactive = [pygame.image.load('but/Defensive_Inactive.png')]
 continue_to_menu = [pygame.image.load('but/continue_to_menu_button.png')]
 contine = [pygame.image.load('but/continue_button.png')]
+
 ##########################################
 
 
@@ -84,7 +93,34 @@ class Visual:
         pos = (pos_x,pos_y)
         self.Display.blit(backgroundshipimg,pos)
 
- 
+    def show_tut_place(self):
+
+        pos_x = (self.Width*0.5) - 400
+        pos_y = (self.Height*0.5) - 177
+        pos = (pos_x,pos_y)
+        self.Display.blit(tutimg_place_, pos)
+
+    def show_tut_turn(self):
+
+        pos_x = (self.Width*0.5) - 400
+        pos_y = (self.Height*0.5) - 177
+        pos = (pos_x,pos_y)
+        self.Display.blit(tutimg_turn, pos)
+
+    def show_tut_move(self):
+
+        pos_x = (self.Width*0.5) - 400
+        pos_y = (self.Height*0.5) - 177
+        pos = (pos_x,pos_y)
+        self.Display.blit(tutimg_move, pos)
+
+    def show_tut_att(self):
+
+        pos_x = (self.Width*0.5) - 400
+        pos_y = (self.Height*0.5) - 177
+        pos = (pos_x,pos_y)
+        self.Display.blit(tutimg_attack, pos)
+
     ##########################################
 
     ################  FUNCTIONS  ################
@@ -122,6 +158,7 @@ class Visual:
         if (x + width) > mouse[0] > x and (y + height) > mouse[1] > y:
             if click[0] == 1 and event != None:
                 self.ActionPicked = event    
+
 
     def Movementbutton (self, mouse, click, button, x, y, width, height, event=None): 
         mouse = pygame.mouse.get_pos()
@@ -590,6 +627,7 @@ class Visual:
         self.drawscreen()
         time.sleep(0.5)
 
+
     def showhelp(self, helpscreen):
         self.ActionPicked = "none"
         while self.ActionPicked == "none":
@@ -604,18 +642,14 @@ class Visual:
             self.Display.fill(self.darkblue)
             self.show_backgroundship()
             self.show_logo()
+            self.show_tut_move()
+
 
             
             #draw the helpscreen
-            x_pos = self.Width * 0.5 
+            x_pos = self.Width * 0.9
             y_pos = self.Height * 0.3
-
-
-
-
-            x_pos = self.Width * 0.5 
-            y_pos = self.Height * 0.7
-            self.ContinueToNextPlayerButton (continue_to_menu, x_pos - 144, y_pos - 34, 268, 68, "pressed")
+            self.ContinueToNextPlayerButton (x_but, x_pos - 34, y_pos - 34, 68, 68, "pressed")
             
 
             self.display_refresh()
