@@ -2,6 +2,8 @@ import pygame
 import class_Game
 import time
 #import class_Game
+import sqlite3
+
 
 ################  IMAGES  ################
 
@@ -140,6 +142,8 @@ class Menu:
             if row[1] != 0 and row[2] != 0:
                 ratio = int(row[1]) / int(row[2])
                 self.addText(str(ratio), x_pos, y_pos, 100, 20)
+            elif row[1] != 0 and row[2] == 0:
+                self.addText(str(row[1]), x_pos, y_pos, 100, 20)
             else:
                 self.addText('0', x_pos, y_pos, 100, 20)
 
