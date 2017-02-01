@@ -33,6 +33,10 @@ startturn_but = [pygame.image.load('but/startturn_button.png') , pygame.image.lo
 nextpage_but = [pygame.image.load('but/nextpage_button.png') , pygame.image.load('but/nextpage_button_over.png')]
 mainimenu_but = [pygame.image.load('but/mainmenu_button.png') , pygame.image.load('but/mainmenu_button_over.png')]
 x_but = [pygame.image.load('but/X_button.png') , pygame.image.load('but/X_button_over.png')]
+soundfx_on = [pygame.image.load('but/soundfx_on_but.png') , pygame.image.load('but/soundfx_on_but_over.png')]
+soundfx_off = [pygame.image.load('but/soundfx_off_but.png') , pygame.image.load('but/soundfx_off_but_over.png')]
+backgroundmusic_on = [pygame.image.load('but/backgroundmusic_on_but.png') , pygame.image.load('but/backgroundmusic_on_but_over.png')]
+backgroundmusic_off = [pygame.image.load('but/backgroundmusic_off_but.png') , pygame.image.load('but/backgroundmusic_off_but_over.png')]
 
 ##########################################
 
@@ -64,6 +68,14 @@ class Menu:
 
         self.player1 = ''
         self.player2 = ''
+
+        self.soundfx = True
+        self.backgroundmusic = True
+
+        pygame.mixer.music.load("sound/background_music.wav")
+
+        if self.backgroundmusic:
+            pygame.mixer.music.play(-1)
     
     def show_logo (self):
 
@@ -94,13 +106,23 @@ class Menu:
             self.Display.blit(button[1],(x,y))
             if click[0] == 1 and event != None:
                 self.Clicked = self.Clicked + 1
-                if self.Clicked > 0:
+                if event == 'backgroundmusic off':
+                        self.backgroundmusic = False
+                        pygame.mixer.music.stop()
+                elif event == 'backgroundmusic on':
+                        self.backgroundmusic = True
+                        pygame.mixer.music.play(-1)
+                elif event == 'soundfx off':
+                        self.soundfx = False
+                elif event == 'soundfx on':
+                        self.soundfx = True
+                elif self.Clicked > 0:
                     self.Clicked = 0
                     self.loop = False
-
                     if event == 'choose players' and self.Playing == False:
                         self.Playing = True
                         self.Pick_Players()
+
                     self.menu_start(event)
 
 
@@ -167,7 +189,7 @@ class Menu:
             y_pos += 20
 
         but_x = self.Width * 0.65
-        but_y = self.Height * 0.35
+        but_y = self.Height * 0.3
 
         self.button(newgame_but, but_x, but_y, 268, 68, 'pickplayer')
         but_y += 100
@@ -175,6 +197,9 @@ class Menu:
         self.CurrentHelp = 0
         self.button(help_but, but_x, but_y, 268, 68, 'help')
         self.TimeOut = 0
+        but_y += 100
+
+        self.button(options_but, but_x, but_y, 268, 68, 'options')
         but_y += 100
 
         self.button(exit_but, but_x, but_y, 268, 68, 'exit')
@@ -263,7 +288,8 @@ class Menu:
             self.Display.blit(self.headfont.render("Starting game | Player 1: " + self.player1 + " | Player2: " + self.player2, True, self.white, (700, 100)),(self.Width * 0.5 - 350 , self.Height * 0.5 - 50))
             self.menu_display_refresh()
             time.sleep(3)
-
+            self.Game.Sound_enabled = self.soundfx
+            self.Game.Music_enabled = self.backgroundmusic
             winner = self.Game.setupgame(self.player1, self.player2)
             if winner.Name == self.player1:
                 print(self.player1 + " wins!")
@@ -275,6 +301,27 @@ class Menu:
                 self.Game.Database.player_lose(self.player1)
 
             self.loop = False
+
+    def show_options (self):
+
+        x_pos = (self.Width * 0.5) - 134
+        y_pos = self.Height * 0.4
+
+        if self.backgroundmusic:
+            self.button(backgroundmusic_on, x_pos, y_pos, 268, 68, 'backgroundmusic off')
+        elif not self.backgroundmusic:
+            self.button(backgroundmusic_off, x_pos, y_pos, 268, 68, 'backgroundmusic on')
+
+        y_pos += 130
+
+        if self.soundfx:
+            self.button(soundfx_on, x_pos, y_pos, 268, 68, 'soundfx off')
+        elif not self.soundfx:
+            self.button(soundfx_off, x_pos, y_pos, 268, 68, 'soundfx on')
+
+        y_pos += 130
+
+        self.button(back_but, x_pos, y_pos, 268, 68, 'main menu')
         
     ##########################################
 
@@ -317,6 +364,9 @@ class Menu:
         elif name == 'pickplayer':
             self.loop = False
             self.Pick_Players()
+
+        elif name == 'options':
+            self.show_options()
                         
     def addText(self, text, x, y, width, height):
         self.Display.blit(self.font.render(text, True, self.white, (width, height)),(x,y))

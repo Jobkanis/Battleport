@@ -15,6 +15,7 @@ class Game:
     def __init__(self, gameDisplay, clock, width, height):
         #creating classes
         self.Sound_enabled = True
+        self.Music_enabled = True
 
         self.Players = []
         self.Positions = []
@@ -30,9 +31,9 @@ class Game:
         self.Database = database.Database()
 
     def setupgame(self, player1name, player2name):
-        if self.Sound_enabled == True:
+        if self.Music_enabled == True:
             pygame.mixer.music.load("sound/bgm_ingame.wav")
-            pygame.mixer.music.set_volume(0.5)
+            pygame.mixer.music.set_volume(1)
             pygame.mixer.music.play(-1)
         ######### Empty Variables ###########
 
