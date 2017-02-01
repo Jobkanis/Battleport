@@ -315,6 +315,7 @@ class Menu:
             self.show_help(1)
 
         elif name == 'pickplayer':
+            self.loop = False
             self.Pick_Players()
                         
     def addText(self, text, x, y, width, height):

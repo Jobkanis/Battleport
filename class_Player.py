@@ -31,6 +31,7 @@ class Player:
         self.Boats = []
 
     def PlayTurn(self):
+        print("It is " + self.Name + "'s turn")
         #Creating possibleaction value
         #for keeping track what the user did and can still do
 
@@ -47,8 +48,8 @@ class Player:
         #AvaiblePlayCards_No = 2
 
         #Taking a card
-        if len(self.Cards) < 7:
-            ("Takecard: yet to be implemented")
+        #if len(self.Cards) < 7:
+       #    ("Takecard: yet to be implemented")
 
         #The actual possible moves the player can do (loop)
         LocalDone = False
@@ -123,10 +124,9 @@ class Player:
 
                 ActionPhase1 = self.Game.Visual.ChooseActionPhase1(BoatsAbleForAction, BoatsAbleToMove, BoatsAbleToAttack, MessageBox1Tekst, MessageBox2Tekst) #AvaiblePlayCards_No) #returns boatclass for boataction, returns 'play cards' or 'end turn'
                 
-                print("Action 1 chosen")
-
                 if ActionPhase1 in BoatsAbleToAttack or ActionPhase1 in BoatsAbleToMove:  #returned a boat to move
                     ############# PHASE 2: PICKING A BOAT ACTION #########################
+                    print("Boat chosen: " + ActionPhase1.Name)
                     if self.Game.Sound_enabled:
                         self.Game.ship_select_sound.play()
                     LocalBoat = ActionPhase1
@@ -151,7 +151,7 @@ class Player:
                     
                     CheckPoint = False
                     while CheckPoint == False:
-                        print("Choose boat action")
+                       
                         MessageBox1Tekst = " " * 20 + "Choose an action (" + "Actions left: " + str(len(BoatsAbleToMove)) + " movements | " + str(AvaibleAttacks_No) + " attacks)"
                         MessageBox2Tekst = "Selected: " + LocalBoat.Name + "  | health: " + str(LocalBoat.Health) + "/" + str(LocalBoat.MaxHealth) + " | movementrange: " + str(LocalBoat.MovementRange)
                         length = len(MessageBox2Tekst)
@@ -161,9 +161,9 @@ class Player:
                         BoatAction = self.Game.Visual.ChooseBoatActionPhase2(LocalBoat, AbleToMove, AbleToAttackBoats, PositionsToAttack, MessageBox1Tekst, MessageBox2Tekst) #returns 'attack when pressed attack, returns 'move' when pressed move, returns 'cancel' when cancled
                         if self.Game.Sound_enabled:
                             self.Game.ship_select_sound.play()
-                        print("action chosen")
                         if BoatAction == "attack":
                             ######################### PHASE 3: ATTACKING A BOAT #####################################
+                            print("Attacking with " + LocalBoat.Name)
                             AvaibleAttacks_No -= 1
                             AvaibleBoatsToAttack.remove(LocalBoat.Name)
                             self.Attack(LocalBoat)
@@ -171,12 +171,13 @@ class Player:
                     
                         elif BoatAction == "move":
                             ######################### PHASE 3: MOVING A BOAT #####################################
-                            print("move " +  LocalBoat.Name)
+                            print("Moveing " +  LocalBoat.Name)
                             AvaibleBoatsToMove.remove(LocalBoat.Name)
                             self.MoveBoat(LocalBoat)
                             CheckPoint = True
 
                         elif BoatAction == "cancel":
+                            print("Canceled boataction")
                             #move back to phase 1
                             CheckPoint = True
                     
@@ -187,6 +188,7 @@ class Player:
 
                 elif ActionPhase1 == "end turn":        #returned "end turn"
                     # END TURN
+                    print("ended turn")
                     LocalDone = True       
             else:
                 #TURN DONE
@@ -331,4 +333,3 @@ class Player:
             elif self == self.Game.Player2:
                 opponent = self.Game.Player1
             self.Game.Winner = opponent
-            print(self.Game.Winner.Name)

@@ -80,12 +80,14 @@ class Game:
     def Play(self):
         self.Player_Playing = self.Player2        
         while self.Winner == self.EmptyPlayer:
+            self.Visual.drawscreen()
             time.sleep(1)
             self.Player_Playing = self.NextPlayer()
             self.Visual.show_nextturn(self.Player_Playing)
 
             self.Player_Playing.PlayTurn()
-
+        self.Visual.drawscreen()
+        time.sleep(1)
         if self.Sound_enabled:
             self.game_over.play()
 
@@ -111,10 +113,6 @@ class Game:
         else: return self.EmptyBoat
 
 ############### SPECIFIC GAME FUNCTIONS ###################
-
-    def Checkifwon(self):
-        print("Check if player won: yet to be implemented: return won player else EmptyPlayer")
-        return self.EmptyPlayer
 
     def NextPlayer(self):
         if self.Player_Playing == self.Player1:

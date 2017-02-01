@@ -111,6 +111,7 @@ class Boat:
         yplus = 0
 
         NextPosition = self.GetXandYchangeoutofpositionChange(PositionToMove)
+        print("Moved boat " + self.Name + " " + str(PositionToMove))
         xplus = NextPosition[0]
         yplus = NextPosition[1]
 
@@ -119,9 +120,6 @@ class Boat:
             self.X += xplus
             self.Y += yplus
             self.UpdateBoatPositions()
-            print("PositionChange succes!")
-        else:
-            print("Error: changing position not possible!")
 
         #checkifonendofmap
         if self.Player == self.Game.Player1:
@@ -160,12 +158,12 @@ class Boat:
                 xplus = xplus + multiplier * plus
 
                 if self.CheckIfPositionTaken(self.X + xplus, NextY, self.DefensiveStance) == True:
+                    print("Boat " + self.Name + " reached the end of the board: gaining him a potential bonuslife")
                     self.ResetBoatPositions()
                     self.Y = NextY
                     self.X = self.X + xplus
                     self.UpdateBoatPositions()
                     succes = True
-                    print("PositionChange succes!")
                     return 0
 
                 else:
@@ -186,7 +184,7 @@ class Boat:
             self.ResetBoatPositions()
             self.DefensiveStance = FutureStance
             self.UpdateBoatPositions()
-            print("stance is changed!")
+            print("Changed the stance of boat " + self.Name + " to " + FutureStance)
         else:
             print("Error: changing stance not possible!")
 
@@ -201,7 +199,6 @@ class Boat:
         for Cpos in CurrentPositions:
             localpos = self.Game.GetPosition(Cpos.X, Cpos.Y)
             localpos.Boat = self
-        print("updated")
 
     def GetXandYchangeoutofpositionChange(self, PositionToMove): #returns [xplus, yplus]
         xplus = 0
