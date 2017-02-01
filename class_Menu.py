@@ -43,7 +43,7 @@ backgroundmusic_off = [pygame.image.load('but/backgroundmusic_off_but.png') , py
 
 class Menu:
 
-    def __init__ (self, game, gameDisplay, clock, width, height):
+    def __init__ (self, game, gameDisplay, clock, width, height):  
         self.Display = gameDisplay
         self.Clock = clock
         self.Width = width
@@ -151,7 +151,6 @@ class Menu:
     ################  MENU'S  ################
 
     def show_main (self):
-
         self.show_top10()
 
         #highscore

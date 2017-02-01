@@ -57,37 +57,37 @@ class Boat:
         if LocalBoatName == 0 or LocalBoatName == 1:    
             if kind == "size2":
                 self.Name = ["Furgo Saltire", "Santa Bettina"][LocalBoatName]
-                self.Health = 1 #2
+                self.Health = 2
                 self.MaxHealth = 2
                 self.Size = 2
-                self.MovementRange = 50# 3
+                self.MovementRange = 3
                 self.X_AttackRange = 2
                 self.Y_AttackRange = 2
                 self.DefensiveRange = 3
             if kind == "size31":
                 self.Name = ["Silver whisper", "Sea Spirit"][LocalBoatName]
-                self.Health = 1 #3
+                self.Health = 3
                 self.MaxHealth = 3
                 self.Size = 3
-                self.MovementRange = 50#2
+                self.MovementRange = 2
                 self.X_AttackRange = 3
                 self.Y_AttackRange = 3
                 self.DefensiveRange = 4
             if kind == "size32":
                 self.Name = ["Windsurf", "Intensity"][LocalBoatName]
-                self.Health = 1# 3
+                self.Health = 3
                 self.MaxHealth = 3
                 self.Size = 3
-                self.MovementRange = 50# 2
+                self.MovementRange = 2
                 self.X_AttackRange = 3
                 self.Y_AttackRange = 3
                 self.DefensiveRange = 4
             if kind == "size4":
                 self.Name = ["Merapi", "Amadea"][LocalBoatName]
-                self.Health = 1#4
+                self.Health = 4
                 self.MaxHealth = 4
                 self.Size = 4
-                self.MovementRange = 50#1
+                self.MovementRange = 1
                 self.X_AttackRange = 4
                 self.Y_AttackRange = 4
                 self.DefensiveRange = 5          
